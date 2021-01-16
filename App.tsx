@@ -1,13 +1,48 @@
+import "react-native-gesture-handler";
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { LogBox, StyleSheet, Text, View } from 'react-native';
+import {DarkTheme, Provider as PaperProvider, Button} from "react-native-paper";
+import { NavigationContainer } from "@react-navigation/native";
+import {createStackNavigator} from "@react-navigation/stack";
+import { CompBottomNavigation } from "./CompBottomNavigation";
+import { gfinitFirebase, gfsignInAnon } from "./Firebase/FirebaseMgr";
+
+// export default function App() {
+//   return (
+//     <View style={styles.container}>      
+//       <Button>Press Me</Button>
+//       <Button icon="camera"
+//         onPress={() => {
+//           console.log("Yamin Nather");
+//         }}
+//       >
+//         Im Gay
+//       </Button>
+//       <Text>Open up App.tsx to start working on your app!</Text>
+//       <StatusBar style="auto" />
+//     </View>
+//   );
+// }
+
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+  LogBox.ignoreLogs(['Setting a timer']);
+  gfinitFirebase();
+  gfsignInAnon();
+  const stack = createStackNavigator();
+  
+  return(
+    <PaperProvider>
+      <NavigationContainer>
+          <stack.Navigator>
+            <stack.Screen 
+              name="Main Page" 
+              component={CompBottomNavigation}                          
+            />                        
+          </stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 
