@@ -84,7 +84,7 @@ export default class CompUserInfoPage extends React.Component<any, State> {
   }
 
   public async floadData(): Promise<void> {
-    const videoIds: string[] = await FibFSMgr.sfgetAllVideoIds();
+    const videoIds: string[] = await FibFSMgr.sfgetAllVideoIds("Yamin Nather");
     const videosDatas: VideoData[] = [];
 
     for(let i: number = 0; i < videoIds.length; i++) {

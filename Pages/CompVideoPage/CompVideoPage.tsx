@@ -38,7 +38,7 @@ export default class CompVideoPage extends React.Component<{}, State> {
     // console.log("CustomLog: Started to load VideoIds");
     
     // const videoIds: string[] = await FibDbMgr.sfgetAllVideoIds();
-    const videoIds: string[] = await FibFSMgr.sfgetAllVideoIds();
+    const videoIds: string[] = await FibFSMgr.sfgetAllVideoIds("", "Yamin Nather");
     
     // console.log("CustomLog: Loaded VideoIds: ");
     // videoIds.forEach(videoId => console.log(`\t${videoId}`));
@@ -166,11 +166,14 @@ export default class CompVideoPage extends React.Component<{}, State> {
   }  
 
   private fchangeVideo(): void {
+    if(this.state.mvideoIds.length == 1)
+      return;
+
     let nextVideoIdIndex: number = this.state.mvideoIdIndex + 1;
     if(nextVideoIdIndex == this.state.mvideoIds.length)
       nextVideoIdIndex = 0;
         
-    this.setState({mvideoIdIndex: nextVideoIdIndex});
+    this.setState({mvideoIdIndex: nextVideoIdIndex});    
   }
 
   private fbuildBottomSection(): React.ReactNode {

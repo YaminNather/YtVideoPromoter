@@ -5,6 +5,7 @@ type Firestore = Firebase.firestore.Firestore;
 type DocumentData = Firebase.firestore.DocumentData;
 type CollectionReference = Firebase.firestore.CollectionReference<DocumentData>;
 type QuerySnapshot = Firebase.firestore.QuerySnapshot<DocumentData>;
+type Query = Firebase.firestore.Query<DocumentData>;
 
 export default class FibFSMgr {
   public static sfgetFS(): Firestore | undefined {
@@ -17,15 +18,21 @@ export default class FibFSMgr {
     return r;
   }
 
-  public static async sfgetAllVideoIds(excludeUserIds: string[] = []): Promise<string[]> {
+  public static async sfgetAllVideoIds(userId: string = "", excludeUserId: string = ""): Promise<string[]> {
     const r: string[] = [];
 
-    const videoIdCollectionRef: CollectionReference | undefined = 
+    let query: Query | undefined = 
       FibFSMgr.sfgetFS()?.collection("Video_Ids");  
       
-    console.log(`Video_Ids collection ref = ${videoIdCollectionRef}`);    
-    
-    const querySnapshot: QuerySnapshot | undefined = await videoIdCollectionRef?.get();
+    console.log(`Video_Ids collection ref = ${query}`);          
+
+    if(userId != "")
+      query = query?.where("User_Id", "==", userId);
+    else if(excludeUserId != "") {
+      query = query?.where("User_Id", "!=", excludeUserId);
+    }    
+
+    const querySnapshot: QuerySnapshot | undefined = await query?.get();
 
     console.log(`QuerySnapshot = ${querySnapshot}`);
 
