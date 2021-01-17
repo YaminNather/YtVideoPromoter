@@ -4,14 +4,15 @@ import {Appbar, Button, Snackbar, Switch} from "react-native-paper";
 import YoutubePlayer, { YoutubeIframeRef } from "react-native-youtube-iframe";
 import FibDbMgr from "../../Firebase/FibDbMgr";
 import FibFSMgr from "../../Firebase/FibFSMgr";
+import VideoData from "../../Models/VideoData";
 
 class State {
   constructor(mcount: number) {
     this.mcount = mcount;
   }
 
-  public mvideoIds: string[] = [];
-  public mvideoIdIndex: number = 0;
+  public mvideosDatas: VideoData[] = [];
+  public mcurVidIndex: number = 0;
   public misVideoPlaying = true;
   public mcount: number = 5;
   public mcounterTimeout?: NodeJS.Timeout;
@@ -31,21 +32,15 @@ export default class CompVideoPage extends React.Component<{}, State> {
     this.state = new State(this.mmaxCount);
     this.mvideoRef = React.createRef<YoutubeIframeRef>();
 
-    this.fgetVideoIds();
+    this.fLoadData();
   }
   
-  private async fgetVideoIds(): Promise<void> {
-    // console.log("CustomLog: Started to load VideoIds");
-    
-    // const videoIds: string[] = await FibDbMgr.sfgetAllVideoIds();
-    const videoIds: string[] = await FibFSMgr.sfgetAllVideoIds("", "Yamin Nather");
-    
-    // console.log("CustomLog: Loaded VideoIds: ");
-    // videoIds.forEach(videoId => console.log(`\t${videoId}`));
-    this.setState({mvideoIds: videoIds});
+  private async fLoadData(): Promise<void> {
+    const videoData: VideoData[] = await FibFSMgr.sfgetAllVideosDatas("", "Yamin Nather");
+    this.setState({mvideosDatas: videoData});
   }
 
-  public render(): React.ReactNode {        
+  public render(): React.ReactNode {
     return(
       <View style={{flex: 1, backgroundColor: "red"}}>
         {/* {this.fbuildAppbar()} */}
@@ -122,7 +117,7 @@ export default class CompVideoPage extends React.Component<{}, State> {
       return(
         <YoutubePlayer           
           ref={this.mvideoRef}
-          videoId={this.state.mvideoIds[this.state.mvideoIdIndex]}
+          videoId={this.state.mvideosDatas[this.state.mcurVidIndex].mvideoId}
           play={this.state.misVideoPlaying}
           height={300}
           width={400}
@@ -157,7 +152,7 @@ export default class CompVideoPage extends React.Component<{}, State> {
 
     return(
       <View style={{flex: 1, backgroundColor: "black", justifyContent: "center", alignItems: "center"}}>
-        {(this.state.mvideoIds.length == 0) ? 
+        {(this.state.mvideosDatas.length == 0) ? 
             <Text style={{color: "white", fontSize: 50}}>Loading VideoIds</Text> : 
             fbuildVideoPlayer()}
         {/* <Text style={{fontSize:100, fontWeight:"bold", color: "white"}}>Video</Text> */}
@@ -166,14 +161,14 @@ export default class CompVideoPage extends React.Component<{}, State> {
   }  
 
   private fchangeVideo(): void {
-    if(this.state.mvideoIds.length == 1)
+    if(this.state.mvideosDatas.length == 1)
       return;
 
-    let nextVideoIdIndex: number = this.state.mvideoIdIndex + 1;
-    if(nextVideoIdIndex == this.state.mvideoIds.length)
+    let nextVideoIdIndex: number = this.state.mcurVidIndex + 1;
+    if(nextVideoIdIndex == this.state.mvideosDatas.length)
       nextVideoIdIndex = 0;
         
-    this.setState({mvideoIdIndex: nextVideoIdIndex});    
+    this.setState({mcurVidIndex: nextVideoIdIndex});    
   }
 
   private fbuildBottomSection(): React.ReactNode {

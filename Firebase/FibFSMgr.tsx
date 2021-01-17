@@ -1,11 +1,13 @@
 import Firebase from "firebase";
 import "firebase/firestore";
+import VideoData from "../Models/VideoData";
 
 type Firestore = Firebase.firestore.Firestore;
 type DocumentData = Firebase.firestore.DocumentData;
 type CollectionReference = Firebase.firestore.CollectionReference<DocumentData>;
 type QuerySnapshot = Firebase.firestore.QuerySnapshot<DocumentData>;
 type Query = Firebase.firestore.Query<DocumentData>;
+type QueryDocumentSnapshot = Firebase.firestore.QueryDocumentSnapshot;
 
 export default class FibFSMgr {
   public static sfgetFS(): Firestore | undefined {
@@ -14,7 +16,7 @@ export default class FibFSMgr {
 
     const r: Firestore | undefined = Firebase.firestore();    
 
-    console.log(`app?.firestore = ${r}`);
+    // console.log(`app?.firestore = ${r}`);
     return r;
   }
 
@@ -22,9 +24,9 @@ export default class FibFSMgr {
     const r: string[] = [];
 
     let query: Query | undefined = 
-      FibFSMgr.sfgetFS()?.collection("Video_Ids");  
+      FibFSMgr.sfgetFS()?.collection(FibFSMgr.smvideoDatasCollectionName);
       
-    console.log(`Video_Ids collection ref = ${query}`);          
+    // console.log(`Video_Ids collection ref = ${query}`);          
 
     if(userId != "")
       query = query?.where("User_Id", "==", userId);
@@ -37,8 +39,8 @@ export default class FibFSMgr {
     console.log(`QuerySnapshot = ${querySnapshot}`);
 
     querySnapshot?.forEach(
-      (documentData) => {
-        const videoId: string = documentData.get("Video_Id");
+      (documentSnapshot) => {
+        const videoId: string = documentSnapshot.get("Video_Id");
         console.log(`Video_Id = ${videoId}`);
         r.push(videoId);      
       }
@@ -46,4 +48,96 @@ export default class FibFSMgr {
 
     return r;
   }
+
+  public static async sfgetAllVideosDatas(userId: string = "", excludeUserId: string = ""): Promise<VideoData[]> {
+    const r: VideoData[] = [];
+    const collectionReference: CollectionReference | undefined = 
+      FibFSMgr.sfgetFS()?.collection(FibFSMgr.smvideoDatasCollectionName);
+    
+    let query: Query | undefined = collectionReference;
+    if(userId != "")
+      query = query?.where("User_Id", "==", userId);    
+    else if(excludeUserId != "")
+      query = query?.where("User_Id", "!=", excludeUserId);
+      
+    const querySnapshot: QuerySnapshot | undefined = await query?.get();
+
+    const documentSnapshots: QueryDocumentSnapshot[] = [];
+    querySnapshot?.forEach((documentSnapshot) => documentSnapshots.push(documentSnapshot));
+
+    for(let i: number = 0; i < documentSnapshots.length; i++) {
+      const documentSnapshot: QueryDocumentSnapshot = documentSnapshots[i];
+      const videoData: VideoData = await VideoData.sfbuildFromDocumentSnapshot(documentSnapshot);
+      console.log(`Current VideoData being pushed = ${videoData}`);
+      r.push(videoData);
+    }
+
+    console.log("\nVideosDatas retrieved from Firestore:");
+    for(let i: number = 0; i < r.length; i++) {
+      console.log(`\tVideoData[${i}] = ${r}`);
+    }
+
+    return(r);
+  }
+
+  public static async sfduplicateCollection(curCollectionName: string, newCollectionName: string): Promise<boolean> {
+    // function lfdocumentDataToObject(documentSnapshot: QueryDocumentSnapshot): any {
+    //   let r: any;
+    //   documentSnapshot.
+    // }
+
+    if(curCollectionName == newCollectionName || curCollectionName == "" || newCollectionName == "") {
+      console.error("Theres something wrong with the names");
+      return false;
+    }
+    try {
+      const oldCollectionRef: CollectionReference | undefined = FibFSMgr.sfgetFS()?.collection(curCollectionName);
+      const newCollectionRef: CollectionReference | undefined = FibFSMgr.sfgetFS()?.collection(newCollectionName);
+
+      const querySnapshot: QuerySnapshot | undefined = await oldCollectionRef?.get();
+      querySnapshot?.forEach(
+        async (documentSnapshot) => {
+          const curDocumentData: DocumentData = documentSnapshot.data(); 
+          console.log(`DocumentData = ${Object.getOwnPropertyNames(curDocumentData)}`);         
+          await newCollectionRef?.doc(documentSnapshot.id).set(curDocumentData);
+        }
+      );      
+      console.log("Done Copying");
+    }
+    catch(error) {
+      console.error("Error while trying to copy");
+      return false;
+    }
+
+    return true;
+  }
+
+  public static sflistenToVideoDatasCollection(func: (videosDatas: VideoData[])=>void): void {
+    const collectionRef: CollectionReference | undefined = 
+      FibFSMgr.sfgetFS()?.collection(FibFSMgr.smvideoDatasCollectionName);
+
+    let r: VideoData[];
+    collectionRef?.onSnapshot(
+      {
+        next: async (querySnapshot) => {
+          r = await FibFSMgr.sfconvertVideosDatasCollectionToModel(querySnapshot);
+          func(r);
+        }
+      }
+    );
+  }  
+
+  private static async sfconvertVideosDatasCollectionToModel(querySnapshot: QuerySnapshot): Promise<VideoData[]> {
+    const r: VideoData[] = [];
+    for(const documentSnapshot of querySnapshot.docs) {      
+      const videoData: VideoData = await VideoData.sfbuildFromDocumentSnapshot(documentSnapshot);
+      r.push(videoData);
+    }
+
+    return(r);
+  }
+
+  //#region Variables
+  private static readonly smvideoDatasCollectionName: string = "VideosDatas";
+  //#endregion
 }

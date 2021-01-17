@@ -1,51 +1,9 @@
+import { forFadeFromBottomAndroid } from "@react-navigation/stack/lib/typescript/src/TransitionConfigs/CardStyleInterpolators";
 import React from "react";
 import {View, Text, ScrollView, Image} from "react-native";
 import { Appbar, Button, Divider, IconButton } from "react-native-paper";
 import FibFSMgr from "../../Firebase/FibFSMgr";
-
-class VideoData {
-  constructor(mvideoId: string) {
-    this.mvideoId = mvideoId;
-  }
-
-  private async fgetVideoTitle(): Promise<string> {
-    // const url: string = `https://youtube.googleapis.com/youtube/v3/videos?
-    //   part=snippet
-    //   &key=AIzaSyDPpUer1aBe9CAvgcBKmzuRYdO6PiRFwAo
-    //   &id=${videoId}`;
-    // const url: string = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&key=AIzaSyDPpUer1aBe9CAvgcBKmzuRYdO6PiRFwAo&id=Ks-_Mh1QhMc`;
-    const url: string = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&key=AIzaSyDPpUer1aBe9CAvgcBKmzuRYdO6PiRFwAo&id=${this.mvideoId}`;
-    const response: Response = await fetch(
-      url,
-      {method: "GET"}
-    );
-
-    const json: any = await response.json();
-
-    // console.log(`Response for url ${url}:`);
-    // console.log(`\t${Object.getOwnPropertyNames(json.items[0])}`);
-    // console.log(`\t${json.items[0].snippet.title}`);
-
-    return json.items[0].snippet.title;
-  }
-
-  private fgetVideoThumbnailURL(): string {
-    return(`https://img.youtube.com/vi/${this.mvideoId}/0.jpg`);
-  }
-
-  public async fgetDataFromVideoId(): Promise<void> {
-    this.mtitle = await this.fgetVideoTitle();
-    this.mthumbnailURL = this.fgetVideoThumbnailURL();
-  }
-
-  public toString(): string {
-    return(`VideoData{mvideoId=${this.mvideoId},mtitle=${this.mtitle},mthumbnailURL=${this.mthumbnailURL}}`);
-  }
-
-  public mvideoId: string;
-  public mtitle: string = "";
-  public mthumbnailURL: string = "";
-}
+import VideoData from "../../Models/VideoData";
 
 class State {
   // public mvideoIds?: string[];
@@ -83,22 +41,32 @@ export default class CompUserInfoPage extends React.Component<any, State> {
     this.floadData();
   }
 
-  public async floadData(): Promise<void> {
-    const videoIds: string[] = await FibFSMgr.sfgetAllVideoIds("Yamin Nather");
-    const videosDatas: VideoData[] = [];
+  // public async floadData(): Promise<void> {
+  //   const videoIds: string[] = await FibFSMgr.sfgetAllVideoIds("Yamin Nather");
+  //   const videosDatas: VideoData[] = [];
 
-    for(let i: number = 0; i < videoIds.length; i++) {
-      const videoData: VideoData = new VideoData(videoIds[i]);
-      await videoData.fgetDataFromVideoId();
-      // console.log(`VideoData[${i}]={videoId=${videoData.mvideoId}, title=${videoData.mtitle}}`);
-      console.log(`VideoData[${i}]=${videoData}`);
-      videosDatas.push(videoData);
+  //   for(let i: number = 0; i < videoIds.length; i++) {
+  //     const videoData: VideoData = await VideoData.sfbuildFromVideoId(videoIds[i]);
+  //     // console.log(`VideoData[${i}]={videoId=${videoData.mvideoId}, title=${videoData.mtitle}}`);
+  //     // console.log(`VideoData[${i}]=${videoData}`);
+  //     videosDatas.push(videoData);
+  //   }
+
+  //   this.setState({mvideosDatas: videosDatas});
+  // }
+
+  public async floadData(): Promise<void> {
+    const videosDatas: VideoData[] = await FibFSMgr.sfgetAllVideosDatas("Yamin Nather");
+
+    console.log("\nLoaded VideoDatas:");
+    for(let i: number = 0; i < videosDatas.length; i++) {
+      console.log(`\tVideoData[${i}] = ${videosDatas[i]}`);
     }
 
     this.setState({mvideosDatas: videosDatas});
   }
   
-  private fbuildAppbar() {
+  private fbuildAppbar(): React.ReactNode {
     return(
       <Appbar.Header>
         <Appbar.Action icon="menu" onPress={() => this.props.navigation.navigate("VideoPage")}/>
@@ -122,7 +90,8 @@ export default class CompUserInfoPage extends React.Component<any, State> {
           <Button 
             mode="contained" style={{marginTop: 5}}
             onPress={async () => {
-
+              console.log("CustomLog:Started Duplicate Collection");
+              await FibFSMgr.sfduplicateCollection("Video_Ids", "VideosDatas"); 
             }}
           >
             Go to your channel
