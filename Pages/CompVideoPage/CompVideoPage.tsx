@@ -32,13 +32,23 @@ export default class CompVideoPage extends React.Component<{}, State> {
     this.state = new State(this.mmaxCount);
     this.mvideoRef = React.createRef<YoutubeIframeRef>();
 
-    this.fLoadData();
+    this.flistenToData();
+  }
+
+  public async componentDidMount(): Promise<void> {
+    await this.flistenToData();
   }
   
-  private async fLoadData(): Promise<void> {
-    const videoData: VideoData[] = await FibFSMgr.sfgetAllVideosDatas("", "Yamin Nather");
-    this.setState({mvideosDatas: videoData});
-  }
+  private async flistenToData(): Promise<void> {
+    // const videoData: VideoData[] = await FibFSMgr.sfgetAllVideosDatas("", "Yamin Nather");
+    // this.setState({mvideosDatas: videoData});
+
+    this.mlistenerUnsubscriber = FibFSMgr.sflistenToVideoDatasCollection(
+      (videosDatas) => this.setState({mvideosDatas: videosDatas}),
+      "",
+      "Yamin Nather"
+    );
+  }  
 
   public render(): React.ReactNode {
     return(
@@ -62,12 +72,9 @@ export default class CompVideoPage extends React.Component<{}, State> {
     this.setState(
       {
         mcounterTimeout: setInterval(
-          async () => {            
+          () => {            
             if(this.state.mcount <= 0) {
-              this.setState({misVideoPlaying: false});
-              this.setState({misSnackbarVisible: true});
-              this.fstopTimer();
-              this.fchangeVideo();
+              this.fonTimerDone();
               return;
             }
 
@@ -79,6 +86,16 @@ export default class CompVideoPage extends React.Component<{}, State> {
       }
     );
   }  
+
+  private fonTimerDone(): void {
+    this.setState({ misVideoPlaying: false });
+    this.setState({ misSnackbarVisible: true });
+    this.fstopTimer();
+
+    
+
+    this.fchangeVideo();
+  }
 
   private fstopTimer(): void {
     if(this.state.mcounterTimeout == undefined) 
@@ -216,8 +233,14 @@ export default class CompVideoPage extends React.Component<{}, State> {
     );
   } 
   
+  public componentWillUnmount(): void {
+    (this.mlistenerUnsubscriber as ()=>void)();
+    this.fstopTimer();
+  }
+
   //#region Variables
   readonly mmaxCount: number = 5;
   private mvideoRef?: React.RefObject<YoutubeIframeRef>;
+  private mlistenerUnsubscriber?: ()=>void;
   //#endregion
 }

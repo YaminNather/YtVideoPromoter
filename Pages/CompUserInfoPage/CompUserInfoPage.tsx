@@ -37,8 +37,8 @@ export default class CompUserInfoPage extends React.Component<any, State> {
     );
   }
   
-  public componentDidMount(): void {
-    this.floadData();
+  public async componentDidMount(): Promise<void> {
+    await this.floadData();
   }
 
   // public async floadData(): Promise<void> {
@@ -56,14 +56,19 @@ export default class CompUserInfoPage extends React.Component<any, State> {
   // }
 
   public async floadData(): Promise<void> {
-    const videosDatas: VideoData[] = await FibFSMgr.sfgetAllVideosDatas("Yamin Nather");
+    // const videosDatas: VideoData[] = await FibFSMgr.sfgetAllVideosDatas("Yamin Nather");
 
-    console.log("\nLoaded VideoDatas:");
-    for(let i: number = 0; i < videosDatas.length; i++) {
-      console.log(`\tVideoData[${i}] = ${videosDatas[i]}`);
-    }
+    // console.log("\nLoaded VideoDatas:");
+    // for(let i: number = 0; i < videosDatas.length; i++) {
+    //   console.log(`\tVideoData[${i}] = ${videosDatas[i]}`);
+    // }
 
-    this.setState({mvideosDatas: videosDatas});
+    // this.setState({mvideosDatas: videosDatas});
+
+    FibFSMgr.sflistenToVideoDatasCollection(
+      (videosDatas) => this.setState({mvideosDatas: videosDatas}),
+      "Yamin Nather"
+    );
   }
   
   private fbuildAppbar(): React.ReactNode {

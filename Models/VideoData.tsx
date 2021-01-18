@@ -6,8 +6,12 @@ type QueryDocumentSnapshot = Firebase.firestore.QueryDocumentSnapshot;
 type DocumentData = Firebase.firestore.DocumentData;
 
 export default class VideoData {
-  private constructor(mvideoId: string) {
+  private constructorm(mid: string, muserId: string, mvideoId: string, mviews: number, mduration: number) {
+    this.mid = mid;
+    this.muserId = muserId;
     this.mvideoId = mvideoId;
+    this.mviews = mviews;
+    this.mduration = mduration;
   }
 
   static async sfbuildFromVideoId(videoId: string): Promise<VideoData> {
@@ -18,7 +22,7 @@ export default class VideoData {
   }
 
   static async sfbuildFromDocumentSnapshot(documentSnapshot: QueryDocumentSnapshot): Promise<VideoData> {
-    const r: VideoData = new VideoData(documentSnapshot.get("Video_Id"));    
+    const r: VideoData = new VideoData(documentSnapshot.get("Video_Id"), );    
     await r.fgetDataFromVideoId();
 
     return(r);
@@ -59,10 +63,12 @@ export default class VideoData {
   }
 
   //#region Variables
+  public mid: string;
+  public muserId: string;
   public mvideoId: string;
   public mtitle: string = "";
   public mthumbnailURL: string = "";
-  public mviews: number = 0;
-  public mduration: number = 0;
+  public mviews: number;
+  public mduration: number;
   //#endregion
 }

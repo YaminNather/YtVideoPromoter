@@ -2,12 +2,15 @@ import Firebase from "firebase";
 import "firebase/firestore";
 import VideoData from "../Models/VideoData";
 
+//#region Type Aliases
 type Firestore = Firebase.firestore.Firestore;
 type DocumentData = Firebase.firestore.DocumentData;
 type CollectionReference = Firebase.firestore.CollectionReference<DocumentData>;
+type DocumentReference = Firebase.firestore.DocumentReference;
 type QuerySnapshot = Firebase.firestore.QuerySnapshot<DocumentData>;
 type Query = Firebase.firestore.Query<DocumentData>;
 type QueryDocumentSnapshot = Firebase.firestore.QueryDocumentSnapshot;
+//#endregion
 
 export default class FibFSMgr {
   public static sfgetFS(): Firestore | undefined {
@@ -112,18 +115,25 @@ export default class FibFSMgr {
     return true;
   }
 
-  public static sflistenToVideoDatasCollection(func: (videosDatas: VideoData[])=>void): void {
-    const collectionRef: CollectionReference | undefined = 
+  public static sflistenToVideoDatasCollection(func: (videosDatas: VideoData[])=>void, 
+    userId: string = "", excludeUserId: string = ""): ()=>void {
+    let query: Query | undefined = 
       FibFSMgr.sfgetFS()?.collection(FibFSMgr.smvideoDatasCollectionName);
 
-    let r: VideoData[];
-    collectionRef?.onSnapshot(
-      {
-        next: async (querySnapshot) => {
-          r = await FibFSMgr.sfconvertVideosDatasCollectionToModel(querySnapshot);
-          func(r);
+    if(userId != "")
+      query = query?.where("User_Id", "==", userId);    
+    else if(excludeUserId != "")
+      query = query?.where("User_Id", "!=", excludeUserId);
+    
+    return (
+      query?.onSnapshot(
+        {
+          next: async (querySnapshot) => {
+            const videosDatas = await FibFSMgr.sfconvertVideosDatasCollectionToModel(querySnapshot);
+            func(videosDatas);
+          }
         }
-      }
+      ) as ()=>void
     );
   }  
 
@@ -135,6 +145,16 @@ export default class FibFSMgr {
     }
 
     return(r);
+  }
+
+  private static async sfupdateVideoData(id: string, videoData: VideoData): Promise<void> {
+    const collectionReference: CollectionReference | undefined = 
+      FibFSMgr.sfgetFS()?.collection(FibFSMgr.smvideoDatasCollectionName);
+    const documentReference: DocumentReference | undefined = collectionReference?.doc(id);
+
+    documentReference?.set(
+      {mvideoId: videoData.mvideoId, mviews: videoData.mviews,mduration: videoData.mduration}
+    );    
   }
 
   //#region Variables
