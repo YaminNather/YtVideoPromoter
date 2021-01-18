@@ -55,8 +55,8 @@ export default class FibFSMgr {
   public static async sfgetAllVideosDatas(userId: string = "", excludeUserId: string = ""): Promise<VideoData[]> {
     const r: VideoData[] = [];
     const collectionReference: CollectionReference | undefined = 
-      FibFSMgr.sfgetFS()?.collection(FibFSMgr.smvideoDatasCollectionName);
-    
+      FibFSMgr.sfgetFS()?.collection(FibFSMgr.smvideoDatasCollectionName);    
+
     let query: Query | undefined = collectionReference;
     if(userId != "")
       query = query?.where("User_Id", "==", userId);    
@@ -147,15 +147,20 @@ export default class FibFSMgr {
     return(r);
   }
 
-  private static async sfupdateVideoData(id: string, videoData: VideoData): Promise<void> {
+  public static async sfupdateVideoData(videoData: VideoData): Promise<void> {
     const collectionReference: CollectionReference | undefined = 
       FibFSMgr.sfgetFS()?.collection(FibFSMgr.smvideoDatasCollectionName);
-    const documentReference: DocumentReference | undefined = collectionReference?.doc(id);
+    const documentReference: DocumentReference | undefined = collectionReference?.doc(videoData.mid);
+
+    // console.log(`\nVideoData before saving = ${videoData.toString()}, mduration=${videoData.mduration}`);
 
     documentReference?.set(
-      {mvideoId: videoData.mvideoId, mviews: videoData.mviews,mduration: videoData.mduration}
+      {
+        Id: videoData.mid, User_Id: videoData.muserId, Video_Id: videoData.mvideoId, 
+        Views: videoData.mviews, Duration: videoData.mduration
+      }
     );    
-  }
+  }  
 
   //#region Variables
   private static readonly smvideoDatasCollectionName: string = "VideosDatas";

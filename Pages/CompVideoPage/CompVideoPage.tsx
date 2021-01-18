@@ -11,6 +11,7 @@ class State {
     this.mcount = mcount;
   }
 
+  //#region Variables 
   public mvideosDatas: VideoData[] = [];
   public mcurVidIndex: number = 0;
   public misVideoPlaying = true;
@@ -18,6 +19,7 @@ class State {
   public mcounterTimeout?: NodeJS.Timeout;
   public misSnackbarVisible: boolean = false;
   public mtoAutoPlay: boolean = true;
+  //#endregion
 }
 
 export default class CompVideoPage extends React.Component<{}, State> {
@@ -29,7 +31,7 @@ export default class CompVideoPage extends React.Component<{}, State> {
     //   "Sgsxnpjs80E",
     //   "ObDzvCORkTw"
     // ];
-    this.state = new State(this.mmaxCount);
+    this.state = new State(0);
     this.mvideoRef = React.createRef<YoutubeIframeRef>();
 
     this.flistenToData();
@@ -48,6 +50,8 @@ export default class CompVideoPage extends React.Component<{}, State> {
       "",
       "Yamin Nather"
     );
+
+    console.log("CustomLog:Done Listening");
   }  
 
   public render(): React.ReactNode {
@@ -90,9 +94,11 @@ export default class CompVideoPage extends React.Component<{}, State> {
   private fonTimerDone(): void {
     this.setState({ misVideoPlaying: false });
     this.setState({ misSnackbarVisible: true });
-    this.fstopTimer();
+    this.fstopTimer();    
 
-    
+    let newData: VideoData = this.state.mvideosDatas[this.state.mcurVidIndex];
+    newData.mviews--;
+    FibFSMgr.sfupdateVideoData(newData);
 
     this.fchangeVideo();
   }
@@ -140,7 +146,7 @@ export default class CompVideoPage extends React.Component<{}, State> {
           width={400}
           onReady={async () => {
             this.fstopTimer();
-            this.setState({mcount: this.mmaxCount});
+            this.setState({mcount: this.state.mvideosDatas[this.state.mcurVidIndex].mduration});
             if(this.state.mtoAutoPlay){
               this.mvideoRef?.current?.seekTo(0, true);
             }
@@ -239,7 +245,7 @@ export default class CompVideoPage extends React.Component<{}, State> {
   }
 
   //#region Variables
-  readonly mmaxCount: number = 5;
+  // readonly mmaxCount: number = 5;
   private mvideoRef?: React.RefObject<YoutubeIframeRef>;
   private mlistenerUnsubscriber?: ()=>void;
   //#endregion
