@@ -7,6 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import {createStackNavigator} from "@react-navigation/stack";
 import { CompBottomNavigation } from "./CompBottomNavigation";
 import { gfinitFirebase, gfsignInAnon } from "./Firebase/FirebaseMgr";
+import FibAuthMgr from "./Firebase/FibAuthMgr";
 
 // export default function App() {
 //   return (
@@ -26,10 +27,10 @@ import { gfinitFirebase, gfsignInAnon } from "./Firebase/FirebaseMgr";
 // }
 
 
-export default function App() {
+export default function App(): React.ReactNode {
   LogBox.ignoreLogs(['Setting a timer']);
   gfinitFirebase();
-  gfsignInAnon();
+  FibAuthMgr.sfsignInAnon();
   const stack = createStackNavigator();
   
   return(
