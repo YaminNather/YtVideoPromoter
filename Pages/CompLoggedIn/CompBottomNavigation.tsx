@@ -1,7 +1,7 @@
 import React from 'react';
 import { BottomNavigation, IconButton } from "react-native-paper";
-import CompVideoPage from './Pages/CompVideoPage/CompVideoPage';
-import CompUserInfoPage from "./Pages/CompUserInfoPage/CompUserInfoPage";
+import CompVideoPage from './CompVideoPage/CompVideoPage';
+import CompUserInfoPage from "./CompUserInfoPage/CompUserInfoPage";
 import { Text } from 'react-native';
 
 class State {
@@ -23,7 +23,7 @@ export class CompBottomNavigation extends React.Component<{}, State> {
       { key: "UserInfo", title: "User Info", icon: "home"},
       { key: "Promote", title: "Promote", icon: "play"}
     ];
-    console.log(`Rerendering, Current State index = ${this.state.mcurIndex}`);
+    // console.log(`Rerendering, Current State index = ${this.state.mcurIndex}`);
     return (
       <BottomNavigation
         navigationState={{ index: this.state.mcurIndex, routes }}
@@ -32,7 +32,7 @@ export class CompBottomNavigation extends React.Component<{}, State> {
         onIndexChange={(index: number) => {
           console.log("Index Changed");
           this.setState((prevState, props) => { return { mcurIndex: index }; });
-        }}              
+        }}
       />
     );
   }

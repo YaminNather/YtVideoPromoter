@@ -11,6 +11,10 @@ export default class User {
     return r;
   }
 
+  public toString(): string {
+    return(`User{muid=${this.muId}, memail=${this.memail}, mphoneNo=${this.mphoneNo}}`);
+  }
+
   //#region Variables
   private muId: string;
   private memail?: string = undefined;

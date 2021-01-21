@@ -2,9 +2,9 @@ import React from "react";
 import {Text, View} from "react-native";
 import {Appbar, Button, Snackbar, Switch} from "react-native-paper";
 import YoutubePlayer, { YoutubeIframeRef } from "react-native-youtube-iframe";
-import FibDbMgr from "../../Firebase/FibDbMgr";
-import FibFSMgr from "../../Firebase/FibFSMgr";
-import VideoData from "../../Models/VideoData";
+import FibDbMgr from "../../../Firebase/FibDbMgr";
+import FibFSMgr from "../../../Firebase/FibFSMgr";
+import VideoData from "../../../Models/VideoData";
 
 class State {
   constructor(mcount: number) {
@@ -45,7 +45,7 @@ export default class CompVideoPage extends React.Component<{}, State> {
     // const videoData: VideoData[] = await FibFSMgr.sfgetAllVideosDatas("", "Yamin Nather");
     // this.setState({mvideosDatas: videoData});
 
-    this.mlistenerUnsubscriber = FibFSMgr.sflistenToVideoDatasCollection(
+    this.mvideosDatasColtnUnsubscriber = FibFSMgr.sflistenToVideoDatasCollection(
       (videosDatas) => this.setState({mvideosDatas: videosDatas}),
       "",
       "Yamin Nather"
@@ -240,13 +240,15 @@ export default class CompVideoPage extends React.Component<{}, State> {
   } 
   
   public componentWillUnmount(): void {
-    (this.mlistenerUnsubscriber as ()=>void)();
+    if(this.mvideosDatasColtnUnsubscriber != undefined)
+      FibFSMgr.sfunsubscribeListener(this.mvideosDatasColtnUnsubscriber);
+
     this.fstopTimer();
   }
 
   //#region Variables
   // readonly mmaxCount: number = 5;
   private mvideoRef?: React.RefObject<YoutubeIframeRef>;
-  private mlistenerUnsubscriber?: ()=>void;
+  private mvideosDatasColtnUnsubscriber?: ()=>void;
   //#endregion
 }

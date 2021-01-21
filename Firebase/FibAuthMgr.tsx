@@ -1,6 +1,7 @@
 import Firebase from "firebase";
 import "firebase/auth";
 import User from "../Models/User";
+import FibFSMgr from "./FibFSMgr";
 
 type UserCredential = Firebase.auth.UserCredential;
 
@@ -15,5 +16,46 @@ export default class FibAuthMgr {
       return User.sfbuildFromFibUser(userCred.user);
     else
       return undefined;
-  }  
+  }
+  
+  public static async sfsignInWithEAP(email: string, password: string): Promise<User | undefined> {
+    if(FibAuthMgr.sfgetCurUser() != undefined)
+      return undefined;
+
+    const userCred: UserCredential = await Firebase.auth().signInWithEmailAndPassword(email, password);    
+    if(userCred.user == null)
+      return undefined;
+
+    return User.sfbuildFromFibUser(userCred.user);
+  }
+
+  public static async sfsignOut(): Promise<void> {
+    FibFSMgr.sfunsubscribeAllListeners();
+
+    console.log("CustomLog:Started signout");
+    await Firebase.auth().signOut();
+    console.log("CustomLog:Done waiting for signout");
+  }
+
+  public static sfgetCurUser(): User | undefined {
+    const fibCurUser: Firebase.User | null = Firebase.auth().currentUser;
+    if(fibCurUser == null)
+      return undefined;    
+    
+      return User.sfbuildFromFibUser(fibCurUser);
+  }
+
+  public static sfonAuthChanged(func: (user: User | undefined)=>void): ()=>void {
+    return Firebase.auth().onAuthStateChanged(
+      (fibUser) => {
+        if(fibUser == null){
+          func(undefined);
+          return;
+        }
+        
+          const user: User = User.sfbuildFromFibUser(fibUser as Firebase.User);
+          func(user);
+      }
+    );
+  }
 }

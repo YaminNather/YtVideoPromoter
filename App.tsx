@@ -5,9 +5,10 @@ import { LogBox, StyleSheet, Text, View } from 'react-native';
 import {DarkTheme, Provider as PaperProvider, Button} from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import {createStackNavigator} from "@react-navigation/stack";
-import { CompBottomNavigation } from "./CompBottomNavigation";
+import { CompBottomNavigation } from "./Pages/CompLoggedIn/CompBottomNavigation";
 import { gfinitFirebase, gfsignInAnon } from "./Firebase/FirebaseMgr";
 import FibAuthMgr from "./Firebase/FibAuthMgr";
+import { CompAuthWrapper } from "./Pages/CompAuthWrapper/CompAuthWrapper";
 
 // export default function App() {
 //   return (
@@ -31,18 +32,10 @@ export default function App(): React.ReactNode {
   LogBox.ignoreLogs(['Setting a timer']);
   gfinitFirebase();
   FibAuthMgr.sfsignInAnon();
-  const stack = createStackNavigator();
-  
+
   return(
     <PaperProvider>
-      <NavigationContainer>
-          <stack.Navigator>
-            <stack.Screen 
-              name="Main Page" 
-              component={CompBottomNavigation}                          
-            />                        
-          </stack.Navigator>
-      </NavigationContainer>
+      <CompAuthWrapper />
     </PaperProvider>
   );
 }

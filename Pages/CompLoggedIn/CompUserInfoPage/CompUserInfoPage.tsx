@@ -2,8 +2,8 @@ import { forFadeFromBottomAndroid } from "@react-navigation/stack/lib/typescript
 import React from "react";
 import {View, Text, ScrollView, Image} from "react-native";
 import { Appbar, Button, Divider, IconButton } from "react-native-paper";
-import FibFSMgr from "../../Firebase/FibFSMgr";
-import VideoData from "../../Models/VideoData";
+import FibFSMgr from "../../../Firebase/FibFSMgr";
+import VideoData from "../../../Models/VideoData";
 
 class State {
   // public mvideoIds?: string[];
@@ -138,4 +138,12 @@ export default class CompUserInfoPage extends React.Component<any, State> {
       </ScrollView>
     );
   }  
+
+  public componentWillUnmount(): void {
+    if(this.fvideosDatasColtnUnsubscriber != undefined)
+      FibFSMgr.sfunsubscribeListener(this.fvideosDatasColtnUnsubscriber);
+  }
+
+
+  private fvideosDatasColtnUnsubscriber?: ()=>void;
 }

@@ -115,7 +115,7 @@ export default class FibFSMgr {
     return true;
   }
 
-  public static sflistenToVideoDatasCollection(func: (videosDatas: VideoData[])=>void, 
+  public static sflistenToVideoDatasCollection(func: (videosDatas: VideoData[])=>void,
     userId: string = "", excludeUserId: string = ""): ()=>void {
     let query: Query | undefined = 
       FibFSMgr.sfgetFS()?.collection(FibFSMgr.smvideoDatasCollectionName);
@@ -124,18 +124,34 @@ export default class FibFSMgr {
       query = query?.where("User_Id", "==", userId);    
     else if(excludeUserId != "")
       query = query?.where("User_Id", "!=", excludeUserId);
-    
-    return (
-      query?.onSnapshot(
-        {
-          next: async (querySnapshot) => {
-            const videosDatas = await FibFSMgr.sfconvertVideosDatasCollectionToModel(querySnapshot);
-            func(videosDatas);
-          }
+
+    const unsubscriber: ()=>void = query?.onSnapshot(
+      {
+        next: async (querySnapshot) => {
+          const videosDatas = await FibFSMgr.sfconvertVideosDatasCollectionToModel(querySnapshot);
+          func(videosDatas);
         }
-      ) as ()=>void
-    );
-  }  
+      }
+    ) as ()=>void;
+
+    FibFSMgr.smfirestoreListeners.push(unsubscriber);
+    
+    return(unsubscriber);
+  }
+  
+  public static sfunsubscribeListener(unsubscriber: ()=>void): void {
+    let index: number = FibFSMgr.smfirestoreListeners.indexOf(unsubscriber);
+    if(index == -1)
+      return;
+
+    delete FibFSMgr.smfirestoreListeners[index];
+    FibFSMgr.smfirestoreListeners.splice(index, 1);
+  }
+
+  public static sfunsubscribeAllListeners(): void {
+    for(let i  = this.smfirestoreListeners.length - 1; i > -1; i--)
+      (this.smfirestoreListeners.pop() as ()=>void)();    
+  }
 
   private static async sfconvertVideosDatasCollectionToModel(querySnapshot: QuerySnapshot): Promise<VideoData[]> {
     const r: VideoData[] = [];
@@ -164,5 +180,6 @@ export default class FibFSMgr {
 
   //#region Variables
   private static readonly smvideoDatasCollectionName: string = "VideosDatas";
+  private static smfirestoreListeners: (()=>void)[] = []; 
   //#endregion
 }
