@@ -1,13 +1,16 @@
+import { NavigationContext } from "@react-navigation/native";
 import { forFadeFromBottomAndroid } from "@react-navigation/stack/lib/typescript/src/TransitionConfigs/CardStyleInterpolators";
 import React from "react";
-import {View, Text, ScrollView, Image} from "react-native";
-import { Appbar, Button, Divider, IconButton } from "react-native-paper";
+import {View, ScrollView, Image} from "react-native";
+import { Appbar, Button, Divider, IconButton, FAB, Text } from "react-native-paper";
+import FibAuthMgr from "../../../Firebase/FibAuthMgr";
 import FibFSMgr from "../../../Firebase/FibFSMgr";
 import VideoData from "../../../Models/VideoData";
+// import {} from "@re";
 
 class State {
   // public mvideoIds?: string[];
-  public mvideosDatas?: VideoData[];
+  public mvideosDatas?: VideoData[];  
 }
 
 export default class CompUserInfoPage extends React.Component<any, State> {
@@ -18,14 +21,6 @@ export default class CompUserInfoPage extends React.Component<any, State> {
   }
   
   public render(): React.ReactNode {
-    if(this.state.mvideosDatas == undefined) {
-      return(
-        <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-          <Text style={{fontSize: 30}}>Loading...</Text>
-        </View>
-      );
-    }
-
     return(
       <View style={{flex: 1}}>
         {/* {this.fbuildAppbar()} */}
@@ -33,10 +28,28 @@ export default class CompUserInfoPage extends React.Component<any, State> {
         {this.fupperSection()}
 
         {this.fbuildVideoList()}
+
+        {this.fbuildFAB()}
       </View>
     );
   }
   
+  private fbuildFAB(): React.ReactNode {
+    return(
+      <NavigationContext.Consumer>
+        {(navigation) => {
+          return(
+            <FAB
+              icon="plus"
+              style={{ position: "absolute", margin: 16, right: 0, bottom: 0 }} 
+              onPress={() => navigation?.navigate("Add Video Page")}
+            />
+          );
+        }}      
+      </NavigationContext.Consumer>
+    );
+  }
+
   public async componentDidMount(): Promise<void> {
     await this.floadData();
   }
@@ -67,7 +80,8 @@ export default class CompUserInfoPage extends React.Component<any, State> {
 
     FibFSMgr.sflistenToVideoDatasCollection(
       (videosDatas) => this.setState({mvideosDatas: videosDatas}),
-      "Yamin Nather"
+      FibAuthMgr.sfgetCurUser()?.fgetUId()
+      // "Yamin Nather"
     );
   }
   
@@ -109,6 +123,15 @@ export default class CompUserInfoPage extends React.Component<any, State> {
   }
   
   private fbuildVideoList(): React.ReactNode {
+    if(this.state.mvideosDatas == undefined || (this.state.mvideosDatas as VideoData[]).length == 0) {
+      return(
+        <View style={{alignItems: "center"}}>          
+          {/* <View style={{height: 100}} /> */}
+          <Text style={{marginTop: 40, fontSize: 20, fontWeight: "500"}}>Click the '+' button to add a video.</Text>
+        </View>
+      );
+    }
+
     let videoComps: React.ReactNode[] = [];
     for(let i: number = 0; i < (this.state.mvideosDatas?.length as number); i++) {
       const videoData: VideoData = (this.state.mvideosDatas as VideoData[])[i];
@@ -133,7 +156,7 @@ export default class CompUserInfoPage extends React.Component<any, State> {
       );      
     }
     return(
-      <ScrollView>
+      <ScrollView>        
         {videoComps}
       </ScrollView>
     );
@@ -143,7 +166,6 @@ export default class CompUserInfoPage extends React.Component<any, State> {
     if(this.fvideosDatasColtnUnsubscriber != undefined)
       FibFSMgr.sfunsubscribeListener(this.fvideosDatasColtnUnsubscriber);
   }
-
 
   private fvideosDatasColtnUnsubscriber?: ()=>void;
 }

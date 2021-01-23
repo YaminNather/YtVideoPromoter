@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import {Button, TextInput} from "react-native-paper";
+import {NavigationContext} from "@react-navigation/native";
 import FibAuthMgr from "../../Firebase/FibAuthMgr";
 
 class State {
@@ -20,23 +21,39 @@ export default class CompSignInPage extends React.Component<{}, State> {
       <View style={{flex: 1, paddingHorizontal: 20, justifyContent: "center", alignItems: "center"}}> 
         <View style={{width: "100%", height: 300}}>
           <TextInput 
-            mode="outlined" placeholder="Email" 
+            mode="outlined" label="Email" 
             onChangeText={(text) => this.setState({mcurEmail: text})}
             value={this.state.mcurEmail}
           />
           
           <TextInput 
-            mode="outlined" placeholder="Password"
+            mode="outlined" label="Password"
             onChangeText={(text) => this.setState({mcurPassword: text})}
             value={this.state.mcurPassword}
             style={{marginTop: 20}}
           />
           
           <Button 
-            mode="contained" style={{marginTop: 20}}
+            mode="contained"
+            onPress={() => {FibAuthMgr.sfsignInWithEAP(this.state.mcurEmail, this.state.mcurPassword)}}
+            style={{marginTop: 20}}
           >
             SignIn With EAP
           </Button>
+
+          <NavigationContext.Consumer>
+            {(navigation) => {
+              return(
+                <Button
+                  mode="contained"
+                  onPress={() => navigation?.navigate("Register Page")}
+                  style={{marginTop: 20}}
+                >
+                  Register
+                </Button>
+              );
+            }}
+          </NavigationContext.Consumer>
         </View>
         
         <View 
@@ -54,9 +71,5 @@ export default class CompSignInPage extends React.Component<{}, State> {
         </View>
       </View>
     );
-  }
-
-  private async efonClickLoginBtn(): Promise<void> {
-
   }
 }

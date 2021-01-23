@@ -6,6 +6,13 @@ import FibFSMgr from "./FibFSMgr";
 type UserCredential = Firebase.auth.UserCredential;
 
 export default class FibAuthMgr {
+  public static async sfregisterWithEAP(email: string, password: string): Promise<User> {
+    const userCred: UserCredential = 
+      await Firebase.auth().createUserWithEmailAndPassword(email, password);
+
+      return User.sfbuildFromFibUser(userCred.user as Firebase.User);
+  }
+
   public static async sfsignInAnon(): Promise<User | undefined> {
     if(Firebase.auth().currentUser != null) 
       return undefined;

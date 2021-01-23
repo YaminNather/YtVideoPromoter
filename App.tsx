@@ -31,8 +31,7 @@ import { CompAuthWrapper } from "./Pages/CompAuthWrapper/CompAuthWrapper";
 export default function App(): React.ReactNode {
   LogBox.ignoreLogs(['Setting a timer']);
   gfinitFirebase();
-  FibAuthMgr.sfsignInAnon();
-
+  
   return(
     <PaperProvider>
       <CompAuthWrapper />

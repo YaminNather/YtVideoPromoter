@@ -176,7 +176,7 @@ export default class CompVideoPage extends React.Component<{}, State> {
     return(
       <View style={{flex: 1, backgroundColor: "black", justifyContent: "center", alignItems: "center"}}>
         {(this.state.mvideosDatas.length == 0) ? 
-            <Text style={{color: "white", fontSize: 50}}>Loading VideoIds</Text> : 
+            <Text style={{color: "white", fontSize: 50}}>No VideoIds Available</Text> : 
             fbuildVideoPlayer()}
         {/* <Text style={{fontSize:100, fontWeight:"bold", color: "white"}}>Video</Text> */}
       </View>
