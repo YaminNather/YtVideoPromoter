@@ -16,7 +16,7 @@ export default class CDropdownItem extends React.Component<Props> {
           mode="contained"  onPress={this.props.monPress} color="grey"
           style={{
             width: "100%", backgroundColor: "#EEEEEE", borderRadius: 0, 
-            borderColor: "grey", borderBottomWidth: 1
+            borderColor: "#DDDDDD", borderBottomWidth: 1
           }}
         >
           {this.props.mtitle}

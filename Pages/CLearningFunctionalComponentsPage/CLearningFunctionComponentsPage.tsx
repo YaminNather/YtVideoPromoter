@@ -13,13 +13,13 @@ export default function CLearningFunctionComponentsPage() {
       <CDropdown 
         mheading="Views" mitemsDatas={itemsDatas} 
         monChange={(value) => console.log(`CustomLog:value = ${value}`)}
-        mstyle={{width: "100%"}}
+        mboxStyle={{width: "100%"}}
       />
       
       <CDropdown 
         mheading="Duration" mitemsDatas={itemsDatas} 
         monChange={(value) => console.log(`CustomLog:value = ${value}`)}
-        mstyle={{width: "100%"}}
+        mboxStyle={{width: "100%"}}
       />
     </View>
   );
