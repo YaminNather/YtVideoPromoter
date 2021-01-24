@@ -48,7 +48,7 @@ const CDropdownValues: FC<Props> = (props) => {
       <Animated.View
         ref={componentRef}
         style={{
-          width: "100%", zIndex: 10, borderWidth: 1, borderColor: "grey", 
+          width: "100%", zIndex: 10, elevation: 1,
           position: "absolute", transform: [{scaleY: openAnimValue}]
         }}
       >

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Divider, Menu } from 'react-native-paper';
+import { Button, Divider, Menu, Text } from 'react-native-paper';
 import CDropdown from './CDropdown';
 
 interface Props {
@@ -13,13 +13,13 @@ export default class CDropdownItem extends React.Component<Props> {
     return(
       <>
         <Button 
-          mode="contained"  onPress={this.props.monPress} color="grey"
+          onPress={this.props.monPress} color="grey"
           style={{
-            width: "100%", backgroundColor: "#EEEEEE", borderRadius: 0, 
-            borderColor: "#DDDDDD", borderBottomWidth: 1
+            width: "100%", maxWidth: "100%", backgroundColor: "#EEEEEE", borderRadius: 0,
+            justifyContent: "flex-start", alignItems: "flex-start"
           }}
         >
-          {this.props.mtitle}
+          <Text style={{flex: 1}}>{this.props.mtitle}</Text>
         </Button>                
       </>
     );

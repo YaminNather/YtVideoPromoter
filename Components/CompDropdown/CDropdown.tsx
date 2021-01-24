@@ -30,7 +30,7 @@ interface Props {
   mheading: string;
   monChange?: (value: any)=>void;
   mheadingStyle?: StyleProp<ViewStyle>;
-  mboxStyle?: StyleProp<ViewStyle>;
+  mboxStyle?: any;
 }
 
 export default class CDropdown extends React.Component<Props, State> {
