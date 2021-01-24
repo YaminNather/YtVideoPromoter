@@ -1,5 +1,5 @@
 import React from "react";
-import {StyleSheet, View, StyleProp} from "react-native";
+import {Animated, StyleSheet, View, StyleProp} from "react-native";
 import {Text, Button, IconButton, Menu} from "react-native-paper";
 import Icon from "react-native-paper/lib/typescript/components/Icon";
 import CDropdownItem from "./CDropdownItem";
@@ -30,6 +30,10 @@ interface Props {
   mstyle?: any;
 }
 
+class ContextData {
+  
+}
+
 export default class CDropdown extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -39,20 +43,26 @@ export default class CDropdown extends React.Component<Props, State> {
 
   public render(): React.ReactNode {
     return(
-      <View style={{flexDirection: "row", alignItems: "center", ...this.props.mstyle}}>
-        <Text style={{fontWeight: "bold", fontSize: 20}}>{this.props.mheading}</Text>
-
+      <View style={{padding: 10, flexDirection: "row", ...this.props.mstyle}}>
+        <Text style={{marginTop: 10, fontWeight: "bold", fontSize: 20}}>{this.props.mheading}</Text>        
+        
         <View style={{width: 10}} />
 
-        <Menu
-          visible={this.state.misOpen} anchor={this.fbuildDropdownBox()}
-          onDismiss={() => this.setState({misOpen: false})}      
-          style={{flex: 1, backgroundColor: "green"}}
-        >
-          {this.fbuildDropdownItems()}
-          {/* <Menu.Item title={this.props.mitemsDatas[0].mtitle} />
-          <Menu.Item title={this.props.mitemsDatas[1].mtitle} /> */}
-        </Menu>
+        <View style={{flex: 1}}>
+          {this.fbuildDropdownBox()}        
+
+          <View>
+            {(this.state.misOpen) ? 
+              <View style={{
+                  width: "100%", zIndex: 1, borderWidth: 1,
+                  borderColor: "grey", position: "absolute"
+                }}
+              >
+                {this.fbuildDropdownItems()}
+              </View> : 
+              undefined}
+          </View>                    
+        </View>
       </View>
     );
   }
@@ -60,8 +70,7 @@ export default class CDropdown extends React.Component<Props, State> {
   private fbuildDropdownBox(): React.ReactNode {
     const styleSheet = StyleSheet.create(
       {
-        box: {        
-          width: "100%",
+        box: {               
           borderWidth: 1,
           borderRadius: 5,
           borderColor: "grey",
@@ -95,18 +104,17 @@ export default class CDropdown extends React.Component<Props, State> {
       <>
         {this.props.mitemsDatas.map(
           (value, index, _) => {
+            const lfonPress: ()=>void = () => {
+              if(value.monPress != undefined) 
+                value.monPress();
+              if(this.props.monChange != undefined)
+                this.props.monChange(value.mvalue);
+              this.fsetCurIndex(index);
+              this.fcloseDropdown();
+            };
+
             return(
-              <CDropdownItem 
-                mtitle={value.mtitle} mindex={index}
-                monPress={() => {
-                  if(value.monPress != undefined) 
-                    value.monPress();
-                  if(this.props.monChange != undefined)
-                    this.props.monChange(value.mvalue);
-                  this.fsetCurIndex(index);
-                  this.fcloseDropdown();
-                }}                
-              />
+              <CDropdownItem key={index} mtitle={value.mtitle} mindex={index} monPress={lfonPress} />
             );
           }
         )}
