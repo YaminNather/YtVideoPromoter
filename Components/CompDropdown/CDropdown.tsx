@@ -43,7 +43,7 @@ export default class CDropdown extends React.Component<Props, State> {
   public render(): React.ReactNode {
     return(
       <View style={{padding: 10, flexDirection: "row", ...this.props.mboxStyle}}>
-        <Text style={{marginTop: 10, fontWeight: "bold", fontSize: 20}}>{this.props.mheading}</Text>        
+        <Text style={{marginTop: 10, fontWeight: "bold", fontSize: 15}}>{this.props.mheading}</Text>        
         
         <View style={{width: 10}} />
 

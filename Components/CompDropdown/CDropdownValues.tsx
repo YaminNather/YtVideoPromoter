@@ -1,5 +1,5 @@
 import React, { FC, Ref, useEffect, useRef } from "react";
-import {Animated, View, Modal} from "react-native";
+import {Animated, View, Modal, Platform} from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { ItemData } from "./CDropdown";
 import CDropdownItem from "./CDropdownItem";
@@ -48,8 +48,9 @@ const CDropdownValues: FC<Props> = (props) => {
       <Animated.View
         ref={componentRef}
         style={{
-          width: "100%", zIndex: 10, elevation: 1,
-          position: "absolute", transform: [{scaleY: openAnimValue}]
+          width: "100%", zIndex: 10,
+          position: "absolute", transform: [{scaleY: openAnimValue}],
+          elevation: 1, borderColor: "#000000"
         }}
       >
         {fbuildDropdownItems()}

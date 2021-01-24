@@ -1,5 +1,7 @@
 import React from 'react';
-import { Button, Divider, Menu, Text } from 'react-native-paper';
+import {Button} from "react-native";
+import { TouchableNativeFeedback, TouchableOpacity } from 'react-native-gesture-handler';
+import {Divider, Menu, Text } from 'react-native-paper';
 import CDropdown from './CDropdown';
 
 interface Props {
@@ -12,15 +14,26 @@ export default class CDropdownItem extends React.Component<Props> {
   public render(): React.ReactNode {
     return(
       <>
-        <Button 
-          onPress={this.props.monPress} color="grey"
+        {/* <Button 
+          onPress={(e) => {
+            if(this.props.monPress)
+              this.props.monPress();
+          }} 
+          color="#DDDDDD"          
+          title={this.props.mtitle}          
+        /> */}
+        <TouchableNativeFeedback 
+          onPress={(e) => {
+            if(this.props.monPress)
+              this.props.monPress();
+          }}
           style={{
-            width: "100%", maxWidth: "100%", backgroundColor: "#EEEEEE", borderRadius: 0,
-            justifyContent: "flex-start", alignItems: "flex-start"
+            height: 50, justifyContent: "center",
+            paddingHorizontal: 20
           }}
         >
-          <Text style={{flex: 1}}>{this.props.mtitle}</Text>
-        </Button>                
+          <Text>{this.props.mtitle}</Text>
+        </TouchableNativeFeedback>
       </>
     );
   }
