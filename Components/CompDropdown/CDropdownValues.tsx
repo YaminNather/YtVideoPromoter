@@ -1,14 +1,15 @@
 import React, { FC, Ref, useEffect, useRef } from "react";
-import {Animated, View, Modal, Platform} from "react-native";
+import {Animated, View, Modal, Platform, StyleProp, ViewStyle, LayoutChangeEvent} from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { ItemData } from "./CDropdown";
 import CDropdownItem from "./CDropdownItem";
 
 interface Props {
   mitemsDatas: ItemData[];
-  mtoggleIsOpen: (value: boolean)=>void;
+  mclose: ()=>void;
   msetCurIndex: (index: number)=>void;
   monChange?: (value: any)=>void;
+  moffsetY: number;
 }
 
 const CDropdownValues: FC<Props> = (props) => {
@@ -20,51 +21,54 @@ const CDropdownValues: FC<Props> = (props) => {
     [openAnimValue]
   );
 
-  const fbuildDropdownItems: ()=>React.ReactNode = () => {
+  const frender: ()=>React.ReactElement = () => {
+    const defStyle: StyleProp<Animated.WithAnimatedObject<ViewStyle>> = {
+      width: "100%", zIndex: 20, backgroundColor: "#EEEEEE",
+      position: "absolute", transform: [{scaleY: openAnimValue}, {translateY: props.moffsetY}],
+      elevation: 5, borderColor: "#000000"
+    };
+
+    const lfbuildDropdownItems: ()=>React.ReactElement = () => {
+      return(
+        <>
+          {props.mitemsDatas.map(
+            (value, index, _) => {
+              const lfonPress: ()=>void = () => {
+                if(value.monPress != undefined) 
+                  value.monPress();
+                if(props.monChange != undefined)
+                  props.monChange(value.mvalue);
+                props.msetCurIndex(index);
+                props.mclose();
+              };
+  
+              return(
+                <CDropdownItem key={index} mtitle={value.mtitle} mindex={index} monPress={lfonPress} />
+              );
+            }
+          )}
+        </>
+      );
+    };    
+
     return(
       <>
-        {props.mitemsDatas.map(
-          (value, index, _) => {
-            const lfonPress: ()=>void = () => {
-              if(value.monPress != undefined) 
-                value.monPress();
-              if(props.monChange != undefined)
-                props.monChange(value.mvalue);
-              props.msetCurIndex(index);
-              props.mtoggleIsOpen(false);
-            };
-
-            return(
-              <CDropdownItem key={index} mtitle={value.mtitle} mindex={index} monPress={lfonPress} />
-            );
-          }
-        )}
+        <Animated.View ref={componentRef} style={defStyle}>
+          {lfbuildDropdownItems()}
+        </Animated.View>
+        
+        <View 
+          onTouchStart={() => props.mclose()}
+          style={{
+            position: "absolute", width: 4000, height: 4000, zIndex: 19, backgroundColor: "transparent",
+            transform: [{translateX: -2000}, {translateY: -2000}]
+          }}
+        />
       </>
     );
   };
 
-  return(
-    <>
-      <Animated.View
-        ref={componentRef}
-        style={{
-          width: "100%", zIndex: 10,
-          position: "absolute", transform: [{scaleY: openAnimValue}],
-          elevation: 1, borderColor: "#000000"
-        }}
-      >
-        {fbuildDropdownItems()}
-      </Animated.View>
-      
-      <View 
-        onTouchStart={() => props.mtoggleIsOpen(false)}
-        style={{
-          position: "absolute", width: 4000, height: 4000, backgroundColor: "transparent",
-          transform: [{translateX: -2000}, {translateY: -2000}]
-        }}
-      />
-    </>
-  );
+  return frender();
 };
 
 export default CDropdownValues;

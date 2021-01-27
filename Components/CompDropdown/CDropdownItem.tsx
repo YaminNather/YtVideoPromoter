@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import {Button} from "react-native";
 import { TouchableNativeFeedback, TouchableOpacity } from 'react-native-gesture-handler';
 import {Divider, Menu, Text } from 'react-native-paper';
@@ -10,31 +10,25 @@ interface Props {
   monPress?: ()=>void;
 }
 
-export default class CDropdownItem extends React.Component<Props> {
-  public render(): React.ReactNode {
-    return(
-      <>
-        {/* <Button 
-          onPress={(e) => {
-            if(this.props.monPress)
-              this.props.monPress();
-          }} 
-          color="#DDDDDD"          
-          title={this.props.mtitle}          
-        /> */}
-        <TouchableNativeFeedback 
-          onPress={(e) => {
-            if(this.props.monPress)
-              this.props.monPress();
-          }}
-          style={{
-            height: 50, justifyContent: "center",
-            paddingHorizontal: 20
-          }}
-        >
-          <Text>{this.props.mtitle}</Text>
-        </TouchableNativeFeedback>
-      </>
+const CDropdownItem : FC<Props> = (props) => {
+  const render: ()=>React.ReactElement = () => {
+    return(              
+      <TouchableNativeFeedback 
+        onPress={(e) => {
+          if(props.monPress)
+            props.monPress();
+        }}
+        style={{
+          height: 40, justifyContent: "center",
+          paddingHorizontal: 20
+        }}
+      >
+        <Text style={{fontSize: 15}}>{props.mtitle}</Text>
+      </TouchableNativeFeedback>      
     );
   }
+
+  return render();
 }
+
+export default CDropdownItem;

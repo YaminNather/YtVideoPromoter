@@ -1,9 +1,6 @@
 import React from "react";
-import {Animated, StyleSheet, View, StyleProp, ViewStyle} from "react-native";
-import {Text, Button, IconButton, Menu} from "react-native-paper";
-import Icon from "react-native-paper/lib/typescript/components/Icon";
+import {View, StyleProp, ViewStyle, TextStyle, Dimensions} from "react-native";
 import CDropdownBox from "./CDropdownBox";
-import CDropdownItem from "./CDropdownItem";
 import CDropdownValues from "./CDropdownValues";
 
 export class ItemData {
@@ -23,14 +20,16 @@ export class ItemData {
 class State {
   misOpen: boolean = false;
   mcurIndex: number = 0;
+  mvaluesOffsetY: number = 0;
 }
 
 interface Props {
   mitemsDatas: ItemData[];  
   mheading: string;
-  monChange?: (value: any)=>void;
+  monChange?: (value: any)=>void;  
+  mcontainerStyle?: StyleProp<ViewStyle>;
   mheadingStyle?: StyleProp<ViewStyle>;
-  mboxStyle?: any;
+  mboxStyle?: StyleProp<ViewStyle>;
 }
 
 export default class CDropdown extends React.Component<Props, State> {
@@ -41,22 +40,21 @@ export default class CDropdown extends React.Component<Props, State> {
   }
 
   public render(): React.ReactNode {
-    return(
-      <View style={{padding: 10, flexDirection: "row", ...this.props.mboxStyle}}>
-        <Text style={{marginTop: 10, fontWeight: "bold", fontSize: 15}}>{this.props.mheading}</Text>        
-        
-        <View style={{width: 10}} />
+    const containerDefStyle: StyleProp<ViewStyle> = {flex: 1, flexDirection: "row"};        
+    const headingDefStyle: StyleProp<TextStyle> = {marginTop: 10, fontWeight: "bold", fontSize: 15};
 
+    return(
+      <View style={[containerDefStyle, this.props.mcontainerStyle]}>        
         <View style={{flex: 1}}>
           <CDropdownBox 
-            misOpen={this.state.misOpen} mtoggleOpen={this.ftoggleOpen} 
-            mtitle={this.props.mitemsDatas[this.state.mcurIndex].mtitle}
+            mheading={this.props.mheading} misOpen={this.state.misOpen} mopen={this.fopen} 
+            mtitle={this.props.mitemsDatas[this.state.mcurIndex].mtitle} mstyle={this.props.mboxStyle}
           />        
 
           <View>
-            {(this.state.misOpen) ? 
-              <CDropdownValues 
-                mitemsDatas={this.props.mitemsDatas} mtoggleIsOpen={this.ftoggleOpen}
+            {(this.state.misOpen) ?
+              <CDropdownValues moffsetY={this.state.mvaluesOffsetY}
+                mitemsDatas={this.props.mitemsDatas} mclose={this.fclose}
                 monChange={this.props.monChange} msetCurIndex={this.fsetCurIndex}   
               /> :
               undefined}
@@ -66,7 +64,26 @@ export default class CDropdown extends React.Component<Props, State> {
     );
   }
 
-  private ftoggleOpen: (value: boolean)=>void = (value) => this.setState({misOpen: value});
+  private fopen: (touchPos: [number, number])=>void = (touchPos) => {
+    const valuesOffsetY: number = this.ffindValuesOffsetY(touchPos);
+    this.setState({misOpen: true, mvaluesOffsetY: valuesOffsetY});
+  };
+
+  private fclose: ()=>void = () => this.setState({misOpen: false});
   
-  private fsetCurIndex: (index: number)=>void = (index) => this.setState({mcurIndex : index})  
+  private fsetCurIndex: (index: number)=>void = (index) => this.setState({mcurIndex : index});  
+
+  private ffindValuesOffsetY: (touchPos: [number, number])=>number = (touchPos) => {
+    const windowHeight = Dimensions.get("window").height;
+    
+    const dropdownItemHeight: number = 40;
+    const lowerEndPos: number = (windowHeight - touchPos[1]) + (dropdownItemHeight * this.props.mitemsDatas.length);
+    
+    let r: number = 0;
+    if(lowerEndPos > windowHeight)
+      r = windowHeight - lowerEndPos;
+
+    // console.log(`touchPosY=${touchPos[1]}, LowerEndPos=${lowerEndPos}, window height=${windowHeight}, Values OffsetY=${r}`);
+    return r;
+  };
 }
