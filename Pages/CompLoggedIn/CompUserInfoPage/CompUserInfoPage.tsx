@@ -136,7 +136,7 @@ export default class CompUserInfoPage extends React.Component<any, State> {
     for(let i: number = 0; i < (this.state.mvideosDatas?.length as number); i++) {
       const videoData: VideoData = (this.state.mvideosDatas as VideoData[])[i];
       const title: string = videoData.mtitle;
-      const thumbnailURL: string = (videoData.mthumbnailURL);
+      const thumbnailURL: string = videoData.mthumbnailURL;
 
       videoComps.push(
         <View key={i}>

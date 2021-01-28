@@ -1,5 +1,6 @@
 import Firebase from "firebase";
 import "firebase/firestore";
+import YoutubeUtilities from "../YoutubeUtilities/YoutubeUtilities";
 
 //#region Variables
 type Firestore = Firebase.firestore.Firestore;
@@ -34,33 +35,8 @@ export default class VideoData {
   }  
 
   public async fgetDataFromVideoId(): Promise<void> {
-    this.mtitle = await this.fgetVideoTitle();
-    this.mthumbnailURL = this.fgetVideoThumbnailURL();
-  }
-
-  private async fgetVideoTitle(): Promise<string> {
-    // const url: string = `https://youtube.googleapis.com/youtube/v3/videos?
-    //   part=snippet
-    //   &key=AIzaSyDPpUer1aBe9CAvgcBKmzuRYdO6PiRFwAo
-    //   &id=${videoId}`;
-    // const url: string = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&key=AIzaSyDPpUer1aBe9CAvgcBKmzuRYdO6PiRFwAo&id=Ks-_Mh1QhMc`;
-    const url: string = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&key=AIzaSyDPpUer1aBe9CAvgcBKmzuRYdO6PiRFwAo&id=${this.mvideoId}`;
-    const response: Response = await fetch(
-      url,
-      {method: "GET"}
-    );
-
-    const json: any = await response.json();
-
-    // console.log(`Response for url ${url}:`);
-    // console.log(`\t${Object.getOwnPropertyNames(json.items[0])}`);
-    // console.log(`\t${json.items[0].snippet.title}`);
-
-    return json.items[0].snippet.title;
-  }
-
-  private fgetVideoThumbnailURL(): string {
-    return(`https://img.youtube.com/vi/${this.mvideoId}/0.jpg`);
+    this.mtitle = await YoutubeUtilities.sfgetVideoTitle(this.mvideoId);
+    this.mthumbnailURL = YoutubeUtilities.sfgetVideoThumbnailURL(this.mvideoId);
   }
 
   public toString(): string {

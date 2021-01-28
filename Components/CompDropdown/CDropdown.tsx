@@ -3,15 +3,15 @@ import {View, StyleProp, ViewStyle, TextStyle, Dimensions} from "react-native";
 import CDropdownBox from "./CDropdownBox";
 import CDropdownValues from "./CDropdownValues";
 
-export class ItemData {
-  constructor(mvalue: any, mtitle: string, monPress?: ()=>void) {
+export class ItemData<T = any> {
+  constructor(mvalue: T, mtitle: string, monPress?: ()=>void) {
     this.mvalue = mvalue;
     this.mtitle = mtitle;
     this.monPress = monPress;
   }
 
   //#region Variables
-  public mvalue: any;
+  public mvalue: T;
   public mtitle: string = "";
   public monPress?: ()=>void = undefined;
   //#endregion
@@ -23,17 +23,17 @@ class State {
   mvaluesOffsetY: number = 0;
 }
 
-interface Props {
-  mitemsDatas: ItemData[];  
+interface Props<T> {
+  mitemsDatas: ItemData<T>[];  
   mheading: string;
-  monChange?: (value: any)=>void;  
+  monChange?: (value: T)=>void;  
   mcontainerStyle?: StyleProp<ViewStyle>;
   mheadingStyle?: StyleProp<ViewStyle>;
   mboxStyle?: StyleProp<ViewStyle>;
 }
 
-export default class CDropdown extends React.Component<Props, State> {
-  constructor(props: Props) {
+export default class CDropdown<T = any> extends React.Component<Props<T>, State> {
+  constructor(props: Props<T>) {
     super(props);
 
     this.state = new State();
