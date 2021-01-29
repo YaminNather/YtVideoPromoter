@@ -18,14 +18,21 @@ export class ItemData<T = any> {
 }
 
 class State {
+  constructor(mcurIndex = -1) {
+    this.mcurIndex = mcurIndex;
+  }
+
+  //#region Variables
   misOpen: boolean = false;
   mcurIndex: number = -1;
   mvaluesOffsetY: number = 0;
+  //#endregion
 }
 
 interface Props<T> {
-  mitemsDatas: ItemData<T>[];  
   mheading: string;
+  mitemsDatas: ItemData<T>[];  
+  mvalue: T | undefined;
   monChange?: (value: T)=>void;  
   mcontainerStyle?: StyleProp<ViewStyle>;
   mheadingStyle?: StyleProp<ViewStyle>;
@@ -35,8 +42,19 @@ interface Props<T> {
 export default class CDropdown<T = any> extends React.Component<Props<T>, State> {
   constructor(props: Props<T>) {
     super(props);
-
-    this.state = new State();
+    
+    let mcurIndex = -1;
+    if(props.mvalue != undefined) {
+      for(let i: number = 0; i < props.mitemsDatas.length; i++) {
+        if(props.mitemsDatas[i].mvalue == props.mvalue) {
+          mcurIndex = i;
+          break;
+        }      
+      }
+      
+    }    
+    
+    this.state = new State(mcurIndex);
   }
 
   public render(): React.ReactNode {

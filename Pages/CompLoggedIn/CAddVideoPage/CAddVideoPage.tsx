@@ -2,6 +2,8 @@ import React, {FC, Dispatch, SetStateAction, useEffect, useRef} from "react";
 import {Image, View} from "react-native";
 import {Button, TextInput, Text} from "react-native-paper";
 import CDropdown, { ItemData } from "../../../Components/CompDropdown/CDropdown";
+import FibAuthMgr from "../../../Firebase/FibAuthMgr";
+import FibFSMgr from "../../../Firebase/FibFSMgr";
 import YoutubeUtilities from "../../../YoutubeUtilities/YoutubeUtilities";
 
 const CAddVideoPage : FC = (props) => {
@@ -12,6 +14,7 @@ const CAddVideoPage : FC = (props) => {
     React.useState<number | undefined>(undefined);
   let duration: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
     React.useState<number | undefined>(undefined);
+  let isAddingToFirestore: [boolean, Dispatch<SetStateAction<boolean>>] = React.useState<boolean>(false);
 
   // console.log(`CustomLog:Video Thumbnail URL = ${videoThumbnailURL[0]}`);
 
@@ -47,8 +50,8 @@ const CAddVideoPage : FC = (props) => {
       new ItemData<number>(400, "400")
     ];
     return(
-      <CDropdown<number> 
-        mheading="Views" mitemsDatas={itemsDatas} mcontainerStyle={{marginTop: 20}} 
+      <CDropdown<number>
+        mheading="Views" mitemsDatas={itemsDatas} mvalue={views[0]} mcontainerStyle={{marginTop: 20}} 
         monChange={(value) => views[1](value)}
       />
     );
@@ -62,7 +65,7 @@ const CAddVideoPage : FC = (props) => {
 
     return(
       <CDropdown<number> 
-        mheading="Duration" mitemsDatas={itemsDatas} mcontainerStyle={{marginTop: 20, marginLeft: 20}}
+        mheading="Duration" mitemsDatas={itemsDatas} mvalue={duration[0]} mcontainerStyle={{marginTop: 20, marginLeft: 20}}
         monChange={(value) => duration[1](value)}  
       />
     );
@@ -72,11 +75,22 @@ const CAddVideoPage : FC = (props) => {
     return(
       <Button 
         mode="contained" 
-        onPress={() => {
-          console.log(`CustomLog:Created a videoData:`);
-          console.log(`\tVideoId = ${YoutubeUtilities.sfextractVideoIdFromURL(videoURL)}`);
-          console.log(`\tViews = ${views[0]}`);
-          console.log(`\tDuration = ${duration[0]}`);
+        onPress={async () => {
+          console.log(`CustomLog:VideoId = ${YoutubeUtilities.sfextractVideoIdFromURL(videoURL)}, views = ${views[0]}, duration = ${duration[0]}`);          
+          
+          const videoId: string | undefined = YoutubeUtilities.sfextractVideoIdFromURL(videoURL);
+          if(videoId != undefined && views[0] != undefined && duration[0] != undefined) {
+            const hasVideoData: boolean = await FibFSMgr.sfcheckIfVideoDataExists(FibAuthMgr.sfgetCurUser()?.fgetUId() as string, videoId);
+            if(!hasVideoData) {
+              console.log(`CustomLog:Created a videoData:`);
+
+              isAddingToFirestore[1](true);
+              await FibFSMgr.sfaddVideoData(FibAuthMgr.sfgetCurUser()?.fgetUId() as string, videoId, views[0], duration[0]);
+              isAddingToFirestore[1](false);
+            }
+            else 
+              console.log("CustomLog:VideoData already exists");
+          }
         }} 
         style={{marginTop: 20}}
       >
@@ -86,10 +100,19 @@ const CAddVideoPage : FC = (props) => {
   }
 
   const frender: ()=>React.ReactElement = () => {
+    if(isAddingToFirestore[0] == true) {
+      return(
+        <View style={{width:"100%", height: "100%"}}>
+          <Text>Adding...</Text>
+        </View>
+      );
+    }
+
     return(
       <View style={{width: "100%", height: "100%"}}>
         <View style={{backgroundColor: "#DDDDDD", paddingVertical: 10, flex: 1, justifyContent: "center"}}>  
           {fbuildVideoTitle()}
+
           {fbuildVideoThumbnail()}
         </View>
   

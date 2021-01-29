@@ -180,8 +180,22 @@ export default class FibFSMgr {
 
   public static async sfaddVideoData(userId: string, videoId: string, views: number, duration: number): Promise<void> {
     await FibFSMgr.sfgetFS()?.collection("VideosDatas").add(
-      {userId: userId, videoId: videoId, views: views, duration: duration}
+      {User_Id: userId, Video_Id: videoId, Views: views, Duration: duration}
     );
+  }
+
+  public static async sfcheckIfVideoDataExists(userId: string, videoId: string): Promise<boolean> {
+    const query: Query = FibFSMgr.sfgetFS()?.collection("VideosDatas").where("User_Id", "==", userId).where("Video_Id", "==", videoId) as Query;
+    const querySnapshot: QuerySnapshot | undefined = await query?.get();
+    
+    if(querySnapshot?.empty) {
+      console.log(`VideoData with User_Id = ${userId}, Video_Id = ${videoId} doesnt exist.`);
+      return(false);
+    }
+    else {
+      console.log(`VideoData with User_Id = ${userId}, Video_Id = ${videoId} exists.`);
+      return(true);
+    }
   }
 
   //#region Variables
