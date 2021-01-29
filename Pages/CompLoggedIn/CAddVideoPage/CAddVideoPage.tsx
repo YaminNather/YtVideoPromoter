@@ -4,12 +4,14 @@ import {Button, TextInput, Text} from "react-native-paper";
 import CDropdown, { ItemData } from "../../../Components/CompDropdown/CDropdown";
 import YoutubeUtilities from "../../../YoutubeUtilities/YoutubeUtilities";
 
-const CAddVideoPage : FC = (props) => {    
+const CAddVideoPage : FC = (props) => {
   const [videoURL, setVideoURL]: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");  
   let videoTitle: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
   let videoThumbnailURL: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
-  let views: [number, Dispatch<SetStateAction<number>>] = React.useState<number>(0);
-  let duration: [number, Dispatch<SetStateAction<number>>] = React.useState<number>(0);
+  let views: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
+    React.useState<number | undefined>(undefined);
+  let duration: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
+    React.useState<number | undefined>(undefined);
 
   // console.log(`CustomLog:Video Thumbnail URL = ${videoThumbnailURL[0]}`);
 
@@ -47,7 +49,7 @@ const CAddVideoPage : FC = (props) => {
     return(
       <CDropdown<number> 
         mheading="Views" mitemsDatas={itemsDatas} mcontainerStyle={{marginTop: 20}} 
-        monChange={(value) => views[1](value)}  
+        monChange={(value) => views[1](value)}
       />
     );
   };
@@ -65,6 +67,23 @@ const CAddVideoPage : FC = (props) => {
       />
     );
   };
+
+  const fbuildAddVideoBtn: ()=>React.ReactElement = () => {
+    return(
+      <Button 
+        mode="contained" 
+        onPress={() => {
+          console.log(`CustomLog:Created a videoData:`);
+          console.log(`\tVideoId = ${YoutubeUtilities.sfextractVideoIdFromURL(videoURL)}`);
+          console.log(`\tViews = ${views[0]}`);
+          console.log(`\tDuration = ${duration[0]}`);
+        }} 
+        style={{marginTop: 20}}
+      >
+        Add Video
+      </Button>
+    );
+  }
 
   const frender: ()=>React.ReactElement = () => {
     return(
@@ -91,8 +110,8 @@ const CAddVideoPage : FC = (props) => {
             
             {fbuildDurationDropdown()}
           </View>
-  
-          <Button mode="contained" style={{marginTop: 20}}>Add Video</Button>
+            
+          {fbuildAddVideoBtn()}
         </View>
       </View>
     );

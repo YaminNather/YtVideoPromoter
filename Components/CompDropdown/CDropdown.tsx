@@ -19,7 +19,7 @@ export class ItemData<T = any> {
 
 class State {
   misOpen: boolean = false;
-  mcurIndex: number = 0;
+  mcurIndex: number = -1;
   mvaluesOffsetY: number = 0;
 }
 
@@ -48,7 +48,8 @@ export default class CDropdown<T = any> extends React.Component<Props<T>, State>
         <View style={{flex: 1}}>
           <CDropdownBox 
             mheading={this.props.mheading} misOpen={this.state.misOpen} mopen={this.fopen} 
-            mtitle={this.props.mitemsDatas[this.state.mcurIndex].mtitle} mstyle={this.props.mboxStyle}
+            mtitle={(this.state.mcurIndex != -1) ? this.props.mitemsDatas[this.state.mcurIndex].mtitle : "-"} 
+            mstyle={this.props.mboxStyle}
           />        
 
           <View>

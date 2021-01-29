@@ -172,11 +172,17 @@ export default class FibFSMgr {
 
     documentReference?.set(
       {
-        Id: videoData.mid, User_Id: videoData.muserId, Video_Id: videoData.mvideoId, 
+        User_Id: videoData.muserId, Video_Id: videoData.mvideoId, 
         Views: videoData.mviews, Duration: videoData.mduration
       }
     );    
-  }  
+  }
+
+  public static async sfaddVideoData(userId: string, videoId: string, views: number, duration: number): Promise<void> {
+    await FibFSMgr.sfgetFS()?.collection("VideosDatas").add(
+      {userId: userId, videoId: videoId, views: views, duration: duration}
+    );
+  }
 
   //#region Variables
   private static readonly smvideoDatasCollectionName: string = "VideosDatas";
