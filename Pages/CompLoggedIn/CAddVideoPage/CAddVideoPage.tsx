@@ -14,9 +14,7 @@ const CAddVideoPage : FC = (props) => {
     React.useState<number | undefined>(undefined);
   let duration: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
     React.useState<number | undefined>(undefined);
-  let isAddingToFirestore: [boolean, Dispatch<SetStateAction<boolean>>] = React.useState<boolean>(false);
-
-  // console.log(`CustomLog:Video Thumbnail URL = ${videoThumbnailURL[0]}`);
+  let isAddingToFirestore: [boolean, Dispatch<SetStateAction<boolean>>] = React.useState<boolean>(false);    
 
   useEffect(
     () => {
@@ -33,7 +31,7 @@ const CAddVideoPage : FC = (props) => {
   const fbuildVideoTitle: ()=>React.ReactElement = () => {
     return(<Text style={{marginHorizontal: 5, fontWeight: "bold", fontSize: 20}}>{videoTitle[0]}</Text>);
   };
-  
+    
   const fbuildVideoThumbnail: ()=>React.ReactElement = () => {
     return(
       <>
