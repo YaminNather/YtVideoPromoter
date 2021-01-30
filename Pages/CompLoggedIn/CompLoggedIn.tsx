@@ -25,7 +25,7 @@ export default class CompLoggedIn extends React.Component {
             }}
           />
           
-          <stack.Screen name="Add Video Page" component={CLearningFunctionComponentsPage} />
+          <stack.Screen name="Add Video Page" component={CAddVideoPage} />
         </stack.Navigator>
       </NavigationContainer>
     );

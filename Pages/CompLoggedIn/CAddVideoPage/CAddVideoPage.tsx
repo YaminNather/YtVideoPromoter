@@ -1,6 +1,7 @@
 import React, {FC, Dispatch, SetStateAction, useEffect, useRef} from "react";
 import {Image, View} from "react-native";
 import {Button, TextInput, Text} from "react-native-paper";
+import CLoader from "../../../Components/CLoader/CLoader";
 import CDropdown, { ItemData } from "../../../Components/CompDropdown/CDropdown";
 import FibAuthMgr from "../../../Firebase/FibAuthMgr";
 import FibFSMgr from "../../../Firebase/FibFSMgr";
@@ -9,27 +10,46 @@ import YoutubeUtilities from "../../../YoutubeUtilities/YoutubeUtilities";
 const CAddVideoPage : FC = (props) => {
   const [videoURL, setVideoURL]: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");  
   let videoTitle: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
+  let videoTitlePromise: [Promise<string> | undefined, Dispatch<SetStateAction<Promise<string> | undefined>>] = 
+    React.useState<Promise<string> | undefined>(undefined);
   let videoThumbnailURL: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
+  
   let views: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
-    React.useState<number | undefined>(undefined);
+    React.useState<number | undefined>(undefined);  
   let duration: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
     React.useState<number | undefined>(undefined);
-  let isAddingToFirestore: [boolean, Dispatch<SetStateAction<boolean>>] = React.useState<boolean>(false);    
+  let isAddingToFirestore: [boolean, Dispatch<SetStateAction<boolean>>] = React.useState<boolean>(false);
 
   useEffect(
     () => {
       const videoId: string | undefined = YoutubeUtilities.sfextractVideoIdFromURL(videoURL);
       if(videoId != undefined) {
-        YoutubeUtilities.sfgetVideoTitle(videoId).then((value) => videoTitle[1](value));
+        // YoutubeUtilities.sfgetVideoTitle(videoId).then((value) => videoTitle[1](value));
         
-        // console.log(`CustomLog:Setting Video Thumbnail URL = ${videoThumbnailURL[0]}`);
+        const promise: Promise<string> = YoutubeUtilities.sfgetVideoTitle(videoId);
+        console.log(`CustomLog:Promise on change = ${promise}`);
+        videoTitlePromise[1](promise);
+        console.log(`CustomLog:Promise after setting videoTitlePromise = ${promise}`);
+        
         videoThumbnailURL[1](YoutubeUtilities.sfgetVideoThumbnailURL(videoId));
       }
     }
   );
 
   const fbuildVideoTitle: ()=>React.ReactElement = () => {
-    return(<Text style={{marginHorizontal: 5, fontWeight: "bold", fontSize: 20}}>{videoTitle[0]}</Text>);
+    // return(<Text style={{marginHorizontal: 5, fontWeight: "bold", fontSize: 20}}>{videoTitle[0]}</Text>);
+    // console.log(`CustomLog:videoTitlePromise = ${videoTitlePromise[0]}`);
+    
+    return(
+      <CLoader<string>
+        mpromise={videoTitlePromise[0]} 
+        mbuildComponent={(value) => {
+          return(
+            <Text style={{marginHorizontal: 5, fontWeight: "bold", fontSize: 20}}>{value}</Text>
+          );
+        }}
+      />
+    );
   };
     
   const fbuildVideoThumbnail: ()=>React.ReactElement = () => {
