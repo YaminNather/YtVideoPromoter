@@ -5,7 +5,6 @@ import CVideoDetails from "./CVideoDetails";
 
 const CVideosList: React.FC = () => {
   const contextData = React.useContext(CompUserInfoPage.smcontext);
-  console.log(`CustomLog:ContextData = ${contextData}`);
 
   const frender: ()=>React.ReactElement = () => {
     return(

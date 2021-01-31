@@ -11,11 +11,11 @@ const CVideoDetails: React.FC<Props> = (props) => {
   const frender: ()=>React.ReactElement = () => {
     return(
       <View key={props.mkey} style={{padding: 10}}>          
-            {/* <View style={{width: 80, height: 50, backgroundColor: "royalblue"}} /> */}
-            <Image 
-              style={{width: "100%", height: 220}}
-              source={{uri: props.mthumbnailURL}}
-            />
+          {/* <View style={{width: 80, height: 50, backgroundColor: "royalblue"}} /> */}
+          <Image 
+            style={{width: "100%", height: 220}}
+            source={{uri: props.mthumbnailURL}}
+          />
 
           <Divider />
         </View>
