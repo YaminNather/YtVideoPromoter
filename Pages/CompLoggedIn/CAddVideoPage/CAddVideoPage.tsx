@@ -8,38 +8,29 @@ import YoutubeUtilities from "../../../YoutubeUtilities/YoutubeUtilities";
 
 const CAddVideoPage : FC = (props) => {
   const [videoURL, setVideoURL]: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");  
-  let videoTitle: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
   let videoThumbnailURL: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
+  
   let views: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
-    React.useState<number | undefined>(undefined);
+    React.useState<number | undefined>(undefined);  
   let duration: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
     React.useState<number | undefined>(undefined);
   let isAddingToFirestore: [boolean, Dispatch<SetStateAction<boolean>>] = React.useState<boolean>(false);
-
-  // console.log(`CustomLog:Video Thumbnail URL = ${videoThumbnailURL[0]}`);
 
   useEffect(
     () => {
       const videoId: string | undefined = YoutubeUtilities.sfextractVideoIdFromURL(videoURL);
       if(videoId != undefined) {
-        YoutubeUtilities.sfgetVideoTitle(videoId).then((value) => videoTitle[1](value));
-        
-        // console.log(`CustomLog:Setting Video Thumbnail URL = ${videoThumbnailURL[0]}`);
         videoThumbnailURL[1](YoutubeUtilities.sfgetVideoThumbnailURL(videoId));
       }
     }
   );
-
-  const fbuildVideoTitle: ()=>React.ReactElement = () => {
-    return(<Text style={{marginHorizontal: 5, fontWeight: "bold", fontSize: 20}}>{videoTitle[0]}</Text>);
-  };
-  
+    
   const fbuildVideoThumbnail: ()=>React.ReactElement = () => {
     return(
       <>
         {(videoThumbnailURL[0] != "") ?
           <Image source={{uri: videoThumbnailURL[0]}} style={{width: "100%", height: "80%"}} /> :
-          <View style={{width: "100%", height: "90%", backgroundColor: "red"}} />}
+          <View style={{width: "100%", height: "90%", backgroundColor: "grey"}} />}
       </>        
     );
   };
@@ -110,9 +101,7 @@ const CAddVideoPage : FC = (props) => {
 
     return(
       <View style={{width: "100%", height: "100%"}}>
-        <View style={{backgroundColor: "#DDDDDD", paddingVertical: 10, flex: 1, justifyContent: "center"}}>  
-          {fbuildVideoTitle()}
-
+        <View style={{backgroundColor: "#DDDDDD", paddingVertical: 10, flex: 1, justifyContent: "center"}}>
           {fbuildVideoThumbnail()}
         </View>
   

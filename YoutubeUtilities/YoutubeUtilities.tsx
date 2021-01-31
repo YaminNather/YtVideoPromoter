@@ -18,11 +18,8 @@ export default class YoutubeUtilities {
   }
 
   public static async sfgetVideoTitle(videoId: string): Promise<string> {
-    // const url: string = `https://youtube.googleapis.com/youtube/v3/videos?
-    //   part=snippet
-    //   &key=AIzaSyDPpUer1aBe9CAvgcBKmzuRYdO6PiRFwAo
-    //   &id=${videoId}`;
-    // const url: string = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&key=AIzaSyDPpUer1aBe9CAvgcBKmzuRYdO6PiRFwAo&id=Ks-_Mh1QhMc`;
+    console.log(`CustomLog:Getting VideoTitle for videoId = ${videoId}`);
+
     const url: string = `https://youtube.googleapis.com/youtube/v3/` + 
     `videos?part=snippet&key=AIzaSyDPpUer1aBe9CAvgcBKmzuRYdO6PiRFwAo&id=${videoId}`;
     const response: Response = await fetch(

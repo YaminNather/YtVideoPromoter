@@ -1,11 +1,12 @@
 import { NavigationContext } from "@react-navigation/native";
-import { forFadeFromBottomAndroid } from "@react-navigation/stack/lib/typescript/src/TransitionConfigs/CardStyleInterpolators";
 import React from "react";
 import {View, ScrollView, Image} from "react-native";
+import { FlatList } from "react-native-gesture-handler";
 import { Appbar, Button, Divider, IconButton, FAB, Text } from "react-native-paper";
 import FibAuthMgr from "../../../Firebase/FibAuthMgr";
 import FibFSMgr from "../../../Firebase/FibFSMgr";
 import VideoData from "../../../Models/VideoData";
+import CVideoDetails from "./CVideoDetails";
 // import {} from "@re";
 
 class State {
@@ -126,39 +127,19 @@ export default class CompUserInfoPage extends React.Component<any, State> {
     if(this.state.mvideosDatas == undefined || (this.state.mvideosDatas as VideoData[]).length == 0) {
       return(
         <View style={{alignItems: "center"}}>          
-          {/* <View style={{height: 100}} /> */}
           <Text style={{marginTop: 40, fontSize: 20, fontWeight: "500"}}>Click the '+' button to add a video.</Text>
         </View>
       );
     }
 
-    let videoComps: React.ReactNode[] = [];
-    for(let i: number = 0; i < (this.state.mvideosDatas?.length as number); i++) {
-      const videoData: VideoData = (this.state.mvideosDatas as VideoData[])[i];
-      const title: string = videoData.mtitle;
-      const thumbnailURL: string = videoData.mthumbnailURL;
-
-      videoComps.push(
-        <View key={i}>
-          <View style={{flexDirection: "row", padding: 10}}>
-            {/* <View style={{width: 80, height: 50, backgroundColor: "royalblue"}} /> */}
-            <Image 
-              style={{width: 80, height: 50}}
-              source={{uri: thumbnailURL}}
-            />            
-            <View style={{width:10}} />
-            
-            <Text style={{fontSize: 15, fontWeight: "bold"}}>{title}</Text>
-          </View>
-
-          <Divider />
-        </View>
-      );      
-    }
     return(
-      <ScrollView>        
-        {videoComps}
-      </ScrollView>
+      <FlatList 
+        data={this.state.mvideosDatas}
+        renderItem={(itemInfo) => {
+          return (<CVideoDetails mkey={itemInfo.index} mthumbnailURL={itemInfo.item.mthumbnailURL} />);
+        }}
+        keyExtractor={(_, index) => `${index}`}   
+      />
     );
   }  
 

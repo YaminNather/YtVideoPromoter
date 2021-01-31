@@ -1,5 +1,5 @@
 import React from 'react';
-import { BottomNavigation, IconButton } from "react-native-paper";
+import { BottomNavigation, Drawer} from "react-native-paper";
 import CompVideoPage from './CompVideoPage/CompVideoPage';
 import CompUserInfoPage from "./CompUserInfoPage/CompUserInfoPage";
 import { Text } from 'react-native';
@@ -25,15 +25,17 @@ export class CompBottomNavigation extends React.Component<{}, State> {
     ];
     // console.log(`Rerendering, Current State index = ${this.state.mcurIndex}`);
     return (
-      <BottomNavigation
-        navigationState={{ index: this.state.mcurIndex, routes }}
-        renderScene={this.renderScene}
-        shifting={true}
-        onIndexChange={(index: number) => {
-          console.log("Index Changed");
-          this.setState((prevState, props) => { return { mcurIndex: index }; });
-        }}
-      />
+      <>
+        <BottomNavigation
+          navigationState={{ index: this.state.mcurIndex, routes }}
+          renderScene={this.renderScene}
+          shifting={true}
+          onIndexChange={(index: number) => {
+            console.log("Index Changed");
+            this.setState((prevState, props) => { return { mcurIndex: index }; });
+          }}
+        /> 
+      </>
     );
   }
 
