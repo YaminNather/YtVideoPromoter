@@ -2,9 +2,9 @@ import React from "react";
 import {Text, View} from "react-native";
 import {Appbar, Button, Snackbar, Switch} from "react-native-paper";
 import YoutubePlayer, { YoutubeIframeRef } from "react-native-youtube-iframe";
-import FibDbMgr from "../../../Firebase/FibDbMgr";
-import FibFSMgr from "../../../Firebase/FibFSMgr";
-import VideoData from "../../../Models/VideoData";
+import FibDbMgr from "../../../../../Firebase/FibDbMgr";
+import FibFSMgr from "../../../../../Firebase/FibFSMgr";
+import VideoData from "../../../../../Models/VideoData";
 
 class State {
   constructor(mcount: number) {
