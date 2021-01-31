@@ -3,9 +3,9 @@ import React from "react";
 import {View, ScrollView, Image} from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Appbar, Button, Divider, IconButton, FAB, Text } from "react-native-paper";
-import FibAuthMgr from "../../../Firebase/FibAuthMgr";
-import FibFSMgr from "../../../Firebase/FibFSMgr";
-import VideoData from "../../../Models/VideoData";
+import FibAuthMgr from "../../../../../Firebase/FibAuthMgr";
+import FibFSMgr from "../../../../../Firebase/FibFSMgr";
+import VideoData from "../../../../../Models/VideoData";
 import CVideoDetails from "./CVideoDetails";
 // import {} from "@re";
 

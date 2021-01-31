@@ -12,7 +12,7 @@ class State {
   public mcurIndex: number;
 }
 
-export class CompBottomNavigation extends React.Component<{}, State> {
+export class CMainPage extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
     this.state = new State(0);
