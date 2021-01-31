@@ -6,12 +6,20 @@ import { Appbar, Button, Divider, IconButton, FAB, Text } from "react-native-pap
 import FibAuthMgr from "../../../../../Firebase/FibAuthMgr";
 import FibFSMgr from "../../../../../Firebase/FibFSMgr";
 import VideoData from "../../../../../Models/VideoData";
-import CVideoDetails from "./CVideoDetails";
+import CVideoDetails from "./CVideoList/CVideoDetails";
+import CVideosList from "./CVideoList/CVideosList";
 // import {} from "@re";
 
+class ContextData {
+  public toString(): string {
+    return(`ContextData{${this.mvideosDatas}}`);
+  }
+
+  public mvideosDatas?: VideoData[] = undefined;
+}
+
 class State {
-  // public mvideoIds?: string[];
-  public mvideosDatas?: VideoData[];  
+  public mvideosDatas?: VideoData[] = undefined;  
 }
 
 export default class CompUserInfoPage extends React.Component<any, State> {
@@ -22,16 +30,21 @@ export default class CompUserInfoPage extends React.Component<any, State> {
   }
   
   public render(): React.ReactNode {
+    const contextData: ContextData = new ContextData();
+    contextData.mvideosDatas = this.state.mvideosDatas;
+
     return(
-      <View style={{flex: 1}}>
-        {/* {this.fbuildAppbar()} */}
-        
-        {this.fupperSection()}
+      <CompUserInfoPage.smcontext.Provider value={contextData}>
+        <View style={{flex: 1}}>
+          {/* {this.fbuildAppbar()} */}
+          
+          {this.fupperSection()}
 
-        {this.fbuildVideoList()}
+          {this.fbuildVideoList()}
 
-        {this.fbuildFAB()}
-      </View>
+          {this.fbuildFAB()}
+        </View>
+      </CompUserInfoPage.smcontext.Provider>
     );
   }
   
@@ -132,21 +145,17 @@ export default class CompUserInfoPage extends React.Component<any, State> {
       );
     }
 
-    return(
-      <FlatList 
-        data={this.state.mvideosDatas}
-        renderItem={(itemInfo) => {
-          return (<CVideoDetails mkey={itemInfo.index} mthumbnailURL={itemInfo.item.mthumbnailURL} />);
-        }}
-        keyExtractor={(_, index) => `${index}`}   
-      />
-    );
+    return(<CVideosList />);
   }  
 
   public componentWillUnmount(): void {
-    if(this.fvideosDatasColtnUnsubscriber != undefined)
-      FibFSMgr.sfunsubscribeListener(this.fvideosDatasColtnUnsubscriber);
+    if(this.mvideosDatasColtnUnsubscriber != undefined)
+      FibFSMgr.sfunsubscribeListener(this.mvideosDatasColtnUnsubscriber);
   }
 
-  private fvideosDatasColtnUnsubscriber?: ()=>void;
+
+  //#region Variables
+  private mvideosDatasColtnUnsubscriber?: ()=>void;
+  public static smcontext: React.Context<ContextData> = React.createContext<ContextData>(new ContextData());
+  //#endregion
 }
