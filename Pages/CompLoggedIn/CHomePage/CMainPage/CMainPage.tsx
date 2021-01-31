@@ -1,8 +1,7 @@
 import React from 'react';
-import { BottomNavigation, IconButton } from "react-native-paper";
+import {BottomNavigation} from "react-native-paper";
 import CompVideoPage from './CompVideoPage/CompVideoPage';
 import CompUserInfoPage from "./CompUserInfoPage/CompUserInfoPage";
-import { Text } from 'react-native';
 
 class State {
   constructor(mcurIndex: number = 0) {
@@ -12,7 +11,7 @@ class State {
   public mcurIndex: number;
 }
 
-export class CompBottomNavigation extends React.Component<{}, State> {
+export class CMainPage extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
     this.state = new State(0);
@@ -23,7 +22,7 @@ export class CompBottomNavigation extends React.Component<{}, State> {
       { key: "UserInfo", title: "User Info", icon: "home"},
       { key: "Promote", title: "Promote", icon: "play"}
     ];
-    // console.log(`Rerendering, Current State index = ${this.state.mcurIndex}`);
+
     return (
       <BottomNavigation
         navigationState={{ index: this.state.mcurIndex, routes }}

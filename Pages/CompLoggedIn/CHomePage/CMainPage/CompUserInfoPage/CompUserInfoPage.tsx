@@ -3,9 +3,9 @@ import { forFadeFromBottomAndroid } from "@react-navigation/stack/lib/typescript
 import React from "react";
 import {View, ScrollView, Image} from "react-native";
 import { Appbar, Button, Divider, IconButton, FAB, Text } from "react-native-paper";
-import FibAuthMgr from "../../../Firebase/FibAuthMgr";
-import FibFSMgr from "../../../Firebase/FibFSMgr";
-import VideoData from "../../../Models/VideoData";
+import FibAuthMgr from "../../../../../Firebase/FibAuthMgr";
+import FibFSMgr from "../../../../../Firebase/FibFSMgr";
+import VideoData from "../../../../../Models/VideoData";
 // import {} from "@re";
 
 class State {

@@ -3,19 +3,20 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import { Button } from "react-native-paper";
 import FibAuthMgr from "../../Firebase/FibAuthMgr";
-import CAddVideoPage from "./CAddVideoPage/CAddVideoPage";
-import { CompBottomNavigation } from "./CompBottomNavigation";
-import CLearningFunctionComponentsPage from "../CLearningFunctionalComponentsPage/CLearningFunctionComponentsPage";
+import CAddVideoPage from "./CHomePage/CAddVideoPage/CAddVideoPage";
+import { CMainPage } from "./CHomePage/CMainPage/CMainPage";
+import {createDrawerNavigator} from "@react-navigation/drawer";
+import CHomePage from "./CHomePage/CHomePage";
 
 export default class CompLoggedIn extends React.Component {
   public render(): React.ReactNode {
-    const stack = createStackNavigator();
+    const drawer = createDrawerNavigator();
     
     return(
       <NavigationContainer>
-        <stack.Navigator>
-          <stack.Screen 
-            name="Home Page" component={CompBottomNavigation} 
+        <drawer.Navigator>
+          <drawer.Screen 
+            name="Home Page" component={CHomePage} 
             options={{
               headerRight: () => (
                 <Button onPress={async () => await FibAuthMgr.sfsignOut()}>
@@ -23,12 +24,8 @@ export default class CompLoggedIn extends React.Component {
                 </Button>                
               )
             }}
-          />
-          
-          <stack.Screen 
-            name="Add Video Page" component={CAddVideoPage}
-          />
-        </stack.Navigator>
+          />          
+        </drawer.Navigator>
       </NavigationContainer>
     );
   }
