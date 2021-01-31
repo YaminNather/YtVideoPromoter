@@ -1,32 +1,17 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
-import { Button } from "react-native-paper";
-import FibAuthMgr from "../../Firebase/FibAuthMgr";
-import CAddVideoPage from "./CAddVideoPage/CAddVideoPage";
-import { CompBottomNavigation } from "./CompBottomNavigation";
-import CLearningFunctionComponentsPage from "../CLearningFunctionalComponentsPage/CLearningFunctionComponentsPage";
+import {createDrawerNavigator} from "@react-navigation/drawer";
+import CHomePage from "./CHomePage/CHomePage";
 
 export default class CompLoggedIn extends React.Component {
   public render(): React.ReactNode {
-    const stack = createStackNavigator();
+    const drawerNavigator = createDrawerNavigator();
     
     return(
       <NavigationContainer>
-        <stack.Navigator>
-          <stack.Screen 
-            name="Home Page" component={CompBottomNavigation} 
-            options={{
-              headerRight: () => (
-                <Button onPress={async () => await FibAuthMgr.sfsignOut()}>
-                  Signout
-                </Button>                
-              )
-            }}
-          />
-          
-          <stack.Screen name="Add Video Page" component={CAddVideoPage} />
-        </stack.Navigator>
+        <drawerNavigator.Navigator>
+          <drawerNavigator.Screen name="Home Page" component={CHomePage}/>                    
+        </drawerNavigator.Navigator>
       </NavigationContainer>
     );
   }

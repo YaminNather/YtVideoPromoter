@@ -1,10 +1,10 @@
 import React, {FC, Dispatch, SetStateAction, useEffect, useRef} from "react";
 import {Image, View} from "react-native";
 import {Button, TextInput, Text} from "react-native-paper";
-import CDropdown, { ItemData } from "../../../Components/CompDropdown/CDropdown";
-import FibAuthMgr from "../../../Firebase/FibAuthMgr";
-import FibFSMgr from "../../../Firebase/FibFSMgr";
-import YoutubeUtilities from "../../../YoutubeUtilities/YoutubeUtilities";
+import CDropdown, { ItemData } from "../../../../Components/CompDropdown/CDropdown";
+import FibAuthMgr from "../../../../Firebase/FibAuthMgr";
+import FibFSMgr from "../../../../Firebase/FibFSMgr";
+import YoutubeUtilities from "../../../../YoutubeUtilities/YoutubeUtilities";
 
 const CAddVideoPage : FC = (props) => {
   const [videoURL, setVideoURL]: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");  

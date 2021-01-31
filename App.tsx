@@ -5,7 +5,7 @@ import { LogBox, StyleSheet, Text, View } from 'react-native';
 import {DarkTheme, Provider as PaperProvider, Button} from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import {createStackNavigator} from "@react-navigation/stack";
-import { CompBottomNavigation } from "./Pages/CompLoggedIn/CompBottomNavigation";
+import { CMainPage } from "./Pages/CompLoggedIn/CHomePage/CMainPage/CMainPage";
 import { gfinitFirebase, gfsignInAnon } from "./Firebase/FirebaseMgr";
 import FibAuthMgr from "./Firebase/FibAuthMgr";
 import { CompAuthWrapper } from "./Pages/CompAuthWrapper/CompAuthWrapper";

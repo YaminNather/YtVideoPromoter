@@ -27,13 +27,11 @@ export class CompAuthWrapper extends React.Component<{}, State> {
 
   public render(): React.ReactNode {
     if(this.state.muser == undefined) {
-      console.log(`CustomLog:CompAuthWrapper rendering the CompSignInPage`);
       return(
         <CompAuthNavWrapper />        
       );
     }
 
-    console.log(`CustomLog:CompAuthWrapper rendering the CompLoggedIn`);
     return(  
       <CompLoggedIn />
     );
