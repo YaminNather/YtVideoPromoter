@@ -35,28 +35,26 @@ export default class VideoData {
   }  
 
   public async fgetDataFromVideoId(): Promise<void> {
-    this.mtitle = await YoutubeUtilities.sfgetVideoTitle(this.mvideoId);
     this.mthumbnailURL = YoutubeUtilities.sfgetVideoThumbnailURL(this.mvideoId);
   }
 
   public toString(): string {
     return(
       `VideoData{mid=${this.mid},muserId=${this.muserId},mvideoId=${this.mvideoId},` + 
-      `mviews=${this.mviews},mduration=${this.mduration},mtitle=${this.mtitle},mthumbnailURL=${this.mthumbnailURL}}`
+      `mviews=${this.mviews},mduration=${this.mduration},mthumbnailURL=${this.mthumbnailURL}}`
     );
   }
 
   public fclone(): VideoData {
-    const r: VideoData = new VideoData(this.mid, this.muserId, this.mvideoId, this.mviews, this.mduration);
-    r.mtitle = this.mtitle;
+    const r: VideoData = new VideoData(this.mid, this.muserId, this.mvideoId, this.mviews, this.mduration);    
     r.mduration = this.mduration;
     return(r);
   }
+
   //#region Variables
   public mid: string;
   public muserId: string;
   public mvideoId: string;
-  public mtitle: string = "";
   public mthumbnailURL: string = "";
   public mviews: number;
   public mduration: number;

@@ -25,7 +25,7 @@ export default function CLoader<T>(props: Props<T>): React.ReactElement {
 
   const faddAnotherThen: ()=>Promise<void> = async () => {
     await sleep(2000);
-    props.mpromise.then((value) => console.log("CustomLog:Second then called"));
+    props.mpromise?.then((value) => console.log("CustomLog:Second then called"));
   };
     
   const frender: ()=>React.ReactElement = () => {

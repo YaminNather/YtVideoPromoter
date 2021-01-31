@@ -1,8 +1,6 @@
 import React from "react";
 import {View, Text} from "react-native";
-import { Button, Menu } from "react-native-paper";
 import CLoader from "../../Components/CLoader/CLoader";
-import CDropdown, { ItemData } from "../../Components/CompDropdown/CDropdown";
 
 export default function CLearningFunctionComponentsPage(): React.ReactElement {  
   return (

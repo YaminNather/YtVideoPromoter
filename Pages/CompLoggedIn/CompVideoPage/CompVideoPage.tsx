@@ -2,6 +2,7 @@ import React from "react";
 import {Text, View} from "react-native";
 import {Appbar, Button, Snackbar, Switch} from "react-native-paper";
 import YoutubePlayer, { YoutubeIframeRef } from "react-native-youtube-iframe";
+import FibAuthMgr from "../../../Firebase/FibAuthMgr";
 import FibDbMgr from "../../../Firebase/FibDbMgr";
 import FibFSMgr from "../../../Firebase/FibFSMgr";
 import VideoData from "../../../Models/VideoData";
@@ -48,7 +49,7 @@ export default class CompVideoPage extends React.Component<{}, State> {
     this.mvideosDatasColtnUnsubscriber = FibFSMgr.sflistenToVideoDatasCollection(
       (videosDatas) => this.setState({mvideosDatas: videosDatas}),
       "",
-      "Yamin Nather"
+      FibAuthMgr.sfgetCurUser()?.fgetUId()
     );
 
     console.log("CustomLog:Done Listening");
