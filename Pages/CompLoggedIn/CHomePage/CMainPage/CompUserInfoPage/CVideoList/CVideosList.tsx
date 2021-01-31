@@ -1,10 +1,10 @@
 import React from "react";
 import { FlatList } from "react-native";
-import CompUserInfoPage from "../CompUserInfoPage";
+import { State, gmcontext as UserInfoPageContext } from "../UserInfoPageData";
 import CVideoDetails from "./CVideoDetails";
 
 const CVideosList: React.FC = () => {
-  const contextData = React.useContext(CompUserInfoPage.smcontext);
+  const contextData: State = React.useContext<State>(UserInfoPageContext);
 
   const frender: ()=>React.ReactElement = () => {
     return(

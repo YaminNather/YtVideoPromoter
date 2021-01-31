@@ -1,6 +1,7 @@
-import React from "react";
-import { View, Image } from "react-native";
-import { Divider, Text } from "react-native-paper";
+import React, { useEffect } from "react";
+import {View, Image, Animated} from "react-native";
+import {Divider, IconButton} from "react-native-paper";
+import {gmcontext as UserInfoContext, State} from "../UserInfoPageData";
 
 interface Props {
   mkey: number;
@@ -8,17 +9,32 @@ interface Props {
 }
 
 const CVideoDetails: React.FC<Props> = (props) => {
-  const frender: ()=>React.ReactElement = () => {
-    return(
-      <View key={props.mkey} style={{padding: 10}}>          
-          {/* <View style={{width: 80, height: 50, backgroundColor: "royalblue"}} /> */}
-          <Image 
-            style={{width: "100%", height: 220}}
-            source={{uri: props.mthumbnailURL}}
-          />
+  const scaleAnimVal: Animated.Value = React.useRef<Animated.Value>(new Animated.Value(1)).current;
+  const contextData: State = React.useContext<State>(UserInfoContext);
 
-          <Divider />
-        </View>
+  useEffect(
+    () => {
+      Animated.timing(scaleAnimVal, {toValue: 0.9, duration: 1000, useNativeDriver: true}).start();
+    }, [scaleAnimVal]
+  );
+  
+  const frender: ()=>React.ReactElement = () => {
+    const inDeleteState: boolean = contextData.minDeleteState;
+
+    return(      
+      <View key={props.mkey} style={{padding: 10, flexDirection: "row", alignItems: "center"}}>  
+        {/* <View style={{width: 80, height: 50, backgroundColor: "royalblue"}} /> */}
+        <Animated.Image 
+          style={{flex: 1, height: 220}}
+          source={{uri: props.mthumbnailURL}}
+        />
+
+        {(!inDeleteState) ?
+          undefined : 
+          <IconButton icon="close" onPress={() => {}} />}
+
+        <Divider />
+      </View>
     );
   }
 

@@ -1,26 +1,12 @@
 import { NavigationContext } from "@react-navigation/native";
 import React from "react";
-import {View, ScrollView, Image} from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import { Appbar, Button, Divider, IconButton, FAB, Text } from "react-native-paper";
+import {View} from "react-native";
+import { Appbar, Button, IconButton, FAB, Text } from "react-native-paper";
 import FibAuthMgr from "../../../../../Firebase/FibAuthMgr";
 import FibFSMgr from "../../../../../Firebase/FibFSMgr";
 import VideoData from "../../../../../Models/VideoData";
-import CVideoDetails from "./CVideoList/CVideoDetails";
 import CVideosList from "./CVideoList/CVideosList";
-// import {} from "@re";
-
-class ContextData {
-  public toString(): string {
-    return(`ContextData{${this.mvideosDatas}}`);
-  }
-
-  public mvideosDatas?: VideoData[] = undefined;
-}
-
-class State {
-  public mvideosDatas?: VideoData[] = undefined;  
-}
+import { State, gmcontext as Context } from "./UserInfoPageData";
 
 export default class CompUserInfoPage extends React.Component<any, State> {
   constructor(props: {}) {
@@ -30,11 +16,8 @@ export default class CompUserInfoPage extends React.Component<any, State> {
   }
   
   public render(): React.ReactNode {
-    const contextData: ContextData = new ContextData();
-    contextData.mvideosDatas = this.state.mvideosDatas;
-
     return(
-      <CompUserInfoPage.smcontext.Provider value={contextData}>
+      <Context.Provider value={this.state}>
         <View style={{flex: 1}}>
           {/* {this.fbuildAppbar()} */}
           
@@ -44,7 +27,7 @@ export default class CompUserInfoPage extends React.Component<any, State> {
 
           {this.fbuildFAB()}
         </View>
-      </CompUserInfoPage.smcontext.Provider>
+      </Context.Provider>
     );
   }
   
@@ -132,6 +115,13 @@ export default class CompUserInfoPage extends React.Component<any, State> {
         </View>
 
         <IconButton icon="pencil" color="white" />
+        
+        <View style={{flex: 1}} />
+
+        <IconButton 
+          icon="delete" color="white" size={30}
+          onPress={() => this.setState((curState, props) => ({minDeleteState: !curState.minDeleteState}))}
+        />
       </View>
     );
   }
@@ -156,6 +146,5 @@ export default class CompUserInfoPage extends React.Component<any, State> {
 
   //#region Variables
   private mvideosDatasColtnUnsubscriber?: ()=>void;
-  public static smcontext: React.Context<ContextData> = React.createContext<ContextData>(new ContextData());
   //#endregion
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import {createStackNavigator} from "@react-navigation/stack";
+import {createStackNavigator, StackHeaderProps} from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { CMainPage } from "./CMainPage/CMainPage";
 import CAddVideoPage from "./CAddVideoPage/CAddVideoPage";
