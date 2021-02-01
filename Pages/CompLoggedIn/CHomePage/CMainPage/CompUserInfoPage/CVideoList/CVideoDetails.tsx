@@ -1,16 +1,17 @@
 import React, { useEffect } from "react";
 import {View, Image, Animated} from "react-native";
 import {Divider, IconButton} from "react-native-paper";
-import {gmcontext as UserInfoContext, State} from "../UserInfoPageData";
+import VideoData from "../../../../../../Models/VideoData";
+import {ContextData, gmcontext as UserInfoContext, State} from "../UserInfoPageData";
 
 interface Props {
   mkey: number;
-  mthumbnailURL: string;
+  mvideoData: VideoData;
 }
 
 const CVideoDetails: React.FC<Props> = (props) => {
   const scaleAnimVal: Animated.Value = React.useRef<Animated.Value>(new Animated.Value(1)).current;
-  const contextData: State = React.useContext<State>(UserInfoContext);
+  const contextData: ContextData = React.useContext<ContextData>(UserInfoContext);
 
   useEffect(
     () => {
@@ -19,19 +20,19 @@ const CVideoDetails: React.FC<Props> = (props) => {
   );
   
   const frender: ()=>React.ReactElement = () => {
-    const inDeleteState: boolean = contextData.minDeleteState;
+    const inDeleteState: boolean = contextData.mstate.minDeleteState;
 
-    return(      
+    return(
       <View key={props.mkey} style={{padding: 10, flexDirection: "row", alignItems: "center"}}>  
         {/* <View style={{width: 80, height: 50, backgroundColor: "royalblue"}} /> */}
         <Animated.Image 
           style={{flex: 1, height: 220}}
-          source={{uri: props.mthumbnailURL}}
+          source={{uri: props.mvideoData.mthumbnailURL}}
         />
 
         {(!inDeleteState) ?
           undefined : 
-          <IconButton icon="close" onPress={() => {}} />}
+          <IconButton icon="close" onPress={() => contextData.mdeleteVideoData(props.mvideoData.mvideoId)} />}
 
         <Divider />
       </View>

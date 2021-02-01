@@ -198,6 +198,30 @@ export default class FibFSMgr {
     }
   }
 
+  public static async sfdeleteVideoData(userId: string, videoId: string): Promise<void> {
+    const coltnRef: CollectionReference | undefined = FibFSMgr.sfgetFS()?.collection("VideosDatas");
+
+    if(coltnRef == undefined)
+      return;
+
+    const query: Query | undefined = coltnRef.where("User_Id", "==", userId).
+      where("Video_Id", "==", videoId);
+
+    if(query == undefined)
+      return;
+      
+    const querySnapshot: QuerySnapshot = await query.get();
+
+    if(querySnapshot.empty) {
+      console.log(`CustomLog:Couldnt find VideoData with User_Id=${userId} and Video_Id=${videoId} to delete`);
+      return;
+    }
+    
+    const docId: string = querySnapshot.docs[0].id;
+    await coltnRef.doc(docId).delete();
+    console.log(`CustomLog:Deleted VideoData with User_Id=${userId} and Video_Id=${videoId}`);
+  }
+
   //#region Variables
   private static readonly smvideoDatasCollectionName: string = "VideosDatas";
   private static smfirestoreListeners: (()=>void)[] = []; 

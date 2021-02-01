@@ -1,23 +1,23 @@
 import { NavigationContext } from "@react-navigation/native";
 import React from "react";
-import {View} from "react-native";
-import { Appbar, Button, IconButton, FAB, Text } from "react-native-paper";
+import {View, ActivityIndicator} from "react-native";
+import { Appbar, Button, IconButton, FAB, Text, Modal} from "react-native-paper";
 import FibAuthMgr from "../../../../../Firebase/FibAuthMgr";
 import FibFSMgr from "../../../../../Firebase/FibFSMgr";
 import VideoData from "../../../../../Models/VideoData";
 import CVideosList from "./CVideoList/CVideosList";
-import { State, gmcontext as Context } from "./UserInfoPageData";
+import { State, gmcontext as Context, ContextData } from "./UserInfoPageData";
 
 export default class CompUserInfoPage extends React.Component<any, State> {
   constructor(props: {}) {
     super(props);
 
-    this.state = new State();
+    this.state = new State();    
   }
   
   public render(): React.ReactNode {
     return(
-      <Context.Provider value={this.state}>
+      <Context.Provider value={new ContextData(this.state, this.fdeleteVideoData)}>
         <View style={{flex: 1}}>
           {/* {this.fbuildAppbar()} */}
           
@@ -27,6 +27,14 @@ export default class CompUserInfoPage extends React.Component<any, State> {
 
           {this.fbuildFAB()}
         </View>
+
+        <Modal 
+          visible={this.state.misDeleting}
+          style={{width: "100%", height: "100%"}}
+        >          
+          {/* <Text style={{color: "white", fontSize: 50}}>Im Gay</Text> */}
+          <ActivityIndicator size="large" color="white" />
+        </Modal>
       </Context.Provider>
     );
   }
@@ -143,6 +151,11 @@ export default class CompUserInfoPage extends React.Component<any, State> {
       FibFSMgr.sfunsubscribeListener(this.mvideosDatasColtnUnsubscriber);
   }
 
+  public fdeleteVideoData: (videoId: string)=>Promise<void> = async (videoId) => {
+    this.setState({misDeleting: true});
+    await FibFSMgr.sfdeleteVideoData(FibAuthMgr.sfgetCurUser()?.fgetUId() as string, videoId);
+    this.setState({misDeleting: false});
+  }
 
   //#region Variables
   private mvideosDatasColtnUnsubscriber?: ()=>void;
