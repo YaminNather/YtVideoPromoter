@@ -1,6 +1,6 @@
 import Firebase from "firebase";
 import "firebase/firestore";
-import VideoData from "../Models/VideoData";
+import VideoData from "../../Models/VideoData";
 
 //#region Type Aliases
 type Firestore = Firebase.firestore.Firestore;
