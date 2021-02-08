@@ -9,14 +9,15 @@ interface Props {
   mvideoData: VideoData;
 }
 
-const CVideoDetails: React.FC<Props> = (props) => {
-  const scaleAnimVal: Animated.Value = React.useRef<Animated.Value>(new Animated.Value(1)).current;
+const CVideoDetails: React.FC<Props> = (props) => {  
   const contextData: ContextData = React.useContext<ContextData>(UserInfoContext);
+  const animVal: Animated.Value = React.useRef<Animated.Value>(new Animated.Value(0)).current;
 
   useEffect(
     () => {
-      Animated.timing(scaleAnimVal, {toValue: 0.9, duration: 1000, useNativeDriver: true}).start();
-    }, [scaleAnimVal]
+      Animated.timing(animVal, {toValue: 1, duration: 5000, useNativeDriver: true}).start();
+    }, 
+    [animVal]
   );
   
   const frender: ()=>React.ReactElement = () => {
@@ -25,15 +26,15 @@ const CVideoDetails: React.FC<Props> = (props) => {
     return(
       <View key={props.mkey} style={{padding: 10, flexDirection: "row", alignItems: "center"}}>  
         {/* <View style={{width: 80, height: 50, backgroundColor: "royalblue"}} /> */}
-        <Animated.Image 
+        <Image 
           style={{flex: 1, height: 220}}
           source={{uri: props.mvideoData.mthumbnailURL}}
         />
 
         {(!inDeleteState) ?
           undefined : 
-          <IconButton icon="close" onPress={() => contextData.mdeleteVideoData(props.mvideoData.mvideoId)} />}
-
+          <IconButton icon="close" onPress={() => contextData.mdeleteVideoData(props.mvideoData.mvideoId)} />
+        }
         <Divider />
       </View>
     );

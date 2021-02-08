@@ -31,9 +31,8 @@ export default class CompUserInfoPage extends React.Component<any, State> {
         <Modal 
           visible={this.state.misDeleting}
           style={{width: "100%", height: "100%"}}
-        >          
-          {/* <Text style={{color: "white", fontSize: 50}}>Im Gay</Text> */}
-          <ActivityIndicator size="large" color="white" />
+        >                    
+          <ActivityIndicator size="large" color="blue" />
         </Modal>
       </Context.Provider>
     );

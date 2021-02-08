@@ -1,6 +1,7 @@
+import { useNavigation } from "@react-navigation/native";
 import React, {FC, Dispatch, SetStateAction, useEffect, useRef} from "react";
 import {Image, View} from "react-native";
-import {Button, TextInput, Text} from "react-native-paper";
+import {Button, TextInput, Text, ActivityIndicator, Modal} from "react-native-paper";
 import CDropdown, { ItemData } from "../../../../Components/CompDropdown/CDropdown";
 import FibAuthMgr from "../../../../Firebase/FibAuthMgr";
 import FibFSMgr from "../../../../Firebase/FibFSMgr";
@@ -8,13 +9,14 @@ import YoutubeUtilities from "../../../../YoutubeUtilities/YoutubeUtilities";
 
 const CAddVideoPage : FC = (props) => {
   const [videoURL, setVideoURL]: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");  
-  let videoThumbnailURL: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
+  const videoThumbnailURL: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
   
-  let views: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
+  const views: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
     React.useState<number | undefined>(undefined);  
-  let duration: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
+  const duration: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
     React.useState<number | undefined>(undefined);
-  let isAddingToFirestore: [boolean, Dispatch<SetStateAction<boolean>>] = React.useState<boolean>(false);
+  const isAddingToFirestore: [boolean, Dispatch<SetStateAction<boolean>>] = React.useState<boolean>(false);
+  const navigation = useNavigation();
 
   useEffect(
     () => {
@@ -77,7 +79,7 @@ const CAddVideoPage : FC = (props) => {
 
               isAddingToFirestore[1](true);
               await FibFSMgr.sfaddVideoData(FibAuthMgr.sfgetCurUser()?.fgetUId() as string, videoId, views[0], duration[0]);
-              isAddingToFirestore[1](false);
+              navigation.goBack();
             }
             else 
               console.log("CustomLog:VideoData already exists");
@@ -91,14 +93,6 @@ const CAddVideoPage : FC = (props) => {
   }
 
   const frender: ()=>React.ReactElement = () => {
-    if(isAddingToFirestore[0] == true) {
-      return(
-        <View style={{width:"100%", height: "100%"}}>
-          <Text>Adding...</Text>
-        </View>
-      );
-    }
-
     return(
       <View style={{width: "100%", height: "100%"}}>
         <View style={{backgroundColor: "#DDDDDD", paddingVertical: 10, flex: 1, justifyContent: "center"}}>
@@ -125,6 +119,10 @@ const CAddVideoPage : FC = (props) => {
             
           {fbuildAddVideoBtn()}
         </View>
+
+        <Modal visible={isAddingToFirestore[0]}>
+          <ActivityIndicator size="large" color="blue" />
+        </Modal>
       </View>
     );
   };
