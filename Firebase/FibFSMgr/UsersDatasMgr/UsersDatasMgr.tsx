@@ -7,7 +7,7 @@ type Query = Firebase.firestore.Query;
 type QuerySnapshot = Firebase.firestore.QuerySnapshot;
 
 export default class UsersDatasMgr {
-    private static sflistenToUserData(userId: string, processor: (userData: UserData)=>void): (()=>void) | undefined {
+    public static sflistenToUserData(userId: string, processor: (userData: UserData)=>void): (()=>void) | undefined {
         const query: Query | undefined = FibFSMgr.sfgetFS()?.collection("Users_Datas").where("User_Id", "==", userId);
         
         const unsubscriber: (()=>void) | undefined = query?.onSnapshot(
@@ -20,5 +20,5 @@ export default class UsersDatasMgr {
         );
 
         return unsubscriber;
-    }
+    }        
 }
