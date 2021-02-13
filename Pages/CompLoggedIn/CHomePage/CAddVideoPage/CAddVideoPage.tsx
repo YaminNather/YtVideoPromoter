@@ -4,7 +4,7 @@ import {Image, View} from "react-native";
 import {Button, TextInput, Text, ActivityIndicator, Modal} from "react-native-paper";
 import CDropdown, { ItemData } from "../../../../Components/CompDropdown/CDropdown";
 import FibAuthMgr from "../../../../Firebase/FibAuthMgr";
-import FibFSMgr from "../../../../Firebase/FibFSMgr";
+import FibFSMgr from "../../../../Firebase/FibFSMgr/FibFSMgr";
 import YoutubeUtilities from "../../../../YoutubeUtilities/YoutubeUtilities";
 
 const CAddVideoPage : FC = (props) => {

@@ -3,7 +3,7 @@ import React from "react";
 import {View, ActivityIndicator} from "react-native";
 import { Appbar, Button, IconButton, FAB, Text, Modal} from "react-native-paper";
 import FibAuthMgr from "../../../../../Firebase/FibAuthMgr";
-import FibFSMgr from "../../../../../Firebase/FibFSMgr";
+import FibFSMgr from "../../../../../Firebase/FibFSMgr/FibFSMgr";
 import VideoData from "../../../../../Models/VideoData";
 import CVideosList from "./CVideoList/CVideosList";
 import { State, gmcontext as Context, ContextData } from "./UserInfoPageData";

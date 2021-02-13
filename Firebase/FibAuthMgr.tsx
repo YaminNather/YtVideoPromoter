@@ -1,7 +1,7 @@
 import Firebase from "firebase";
 import "firebase/auth";
 import User from "../Models/User";
-import FibFSMgr from "./FibFSMgr";
+import FibFSMgr from "./FibFSMgr/FibFSMgr";
 
 type UserCredential = Firebase.auth.UserCredential;
 
