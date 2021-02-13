@@ -43,6 +43,7 @@ const CHomePage: React.FC = () => {
 };
 
 const CCoinsDisplay: React.FC = () => {
+  //#region Hooks
   const reactFunctionsRef: React.RefObject<number> = useRef<number>(0);
   const userDataUnsubscriber: React.MutableRefObject<(()=>void) | undefined> = useRef<()=>void>();
   const coins: [number, Dispatch<SetStateAction<number>>] = useState<number>(999);
@@ -68,6 +69,7 @@ const CCoinsDisplay: React.FC = () => {
     }, 
     [reactFunctionsRef]
   );
+  //#endregion
 
   return(
     <View style={{flexDirection: "row", alignItems: "center"}}>
