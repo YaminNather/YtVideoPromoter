@@ -8,6 +8,7 @@ import { Button, IconButton } from "react-native-paper";
 import FibAuthMgr from "../../../Firebase/FibAuthMgr";
 import {MaterialIcons} from "@expo/vector-icons";
 import UsersDatasMgr from "../../../Firebase/FibFSMgr/UsersDatasMgr/UsersDatasMgr";
+import CLearningFunctionComponentsPage from "../../CLearningFunctionalComponentsPage/CLearningFunctionComponentsPage";
 
 const CHomePage: React.FC = () => {
   const frender: ()=>React.ReactElement = () => {
@@ -34,7 +35,7 @@ const CHomePage: React.FC = () => {
           }}
         />
         
-        <stackNavigator.Screen name="Add Video Page" component={CAddVideoPage} />
+        <stackNavigator.Screen name="Add Video Page" component={CLearningFunctionComponentsPage} />
       </stackNavigator.Navigator>
     );
   };
@@ -43,6 +44,7 @@ const CHomePage: React.FC = () => {
 };
 
 const CCoinsDisplay: React.FC = () => {
+  //#region Hooks
   const reactFunctionsRef: React.RefObject<number> = useRef<number>(0);
   const userDataUnsubscriber: React.MutableRefObject<(()=>void) | undefined> = useRef<()=>void>();
   const coins: [number, Dispatch<SetStateAction<number>>] = useState<number>(999);
@@ -68,6 +70,7 @@ const CCoinsDisplay: React.FC = () => {
     }, 
     [reactFunctionsRef]
   );
+  //#endregion
 
   return(
     <View style={{flexDirection: "row", alignItems: "center"}}>

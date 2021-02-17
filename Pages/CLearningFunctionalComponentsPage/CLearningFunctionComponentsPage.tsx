@@ -1,16 +1,15 @@
 import React from "react";
 import {View, Text} from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import CLoader from "../../Components/CLoader/CLoader";
 
-export default function CLearningFunctionComponentsPage(): React.ReactElement {  
+export default function CLearningFunctionComponentsPage(): React.ReactElement {
   return (
     <View style={{width: "100%", height: "100%"}}>
       <CLoader<number>
-        mpromise={fgetOne()} 
-        mcLoading={<Text>Loading...</Text>} 
-        mbuildComponent={(val) => {
-          return(<Text>{`Loaded value = ${val}`}</Text>);
-        }} 
+        mpromise={fgetOne()}
+        mloadingComponent={() => (<ActivityIndicator color="red" size="large" />)}
+        mbuildComponent={(val) => (<Text>{`Loaded value = ${val}`}</Text>)} 
       />
     </View>
   );
