@@ -4,11 +4,13 @@ import {createStackNavigator, StackHeaderProps} from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { CMainPage } from "./CMainPage/CMainPage";
 import CAddVideoPage from "./CAddVideoPage/CAddVideoPage";
-import { Button, IconButton } from "react-native-paper";
+import { ActivityIndicator, Button, IconButton } from "react-native-paper";
 import FibAuthMgr from "../../../Firebase/FibAuthMgr";
 import {MaterialIcons} from "@expo/vector-icons";
 import UsersDatasMgr from "../../../Firebase/FibFSMgr/UsersDatasMgr/UsersDatasMgr";
 import CLearningFunctionComponentsPage from "../../CLearningFunctionalComponentsPage/CLearningFunctionComponentsPage";
+import CStreamBuilder from "../../../Components/CStreamBuilder/CStreamBuilder";
+import UserData from "../../../Models/UserData";
 
 const CHomePage: React.FC = () => {
   const frender: ()=>React.ReactElement = () => {
@@ -44,39 +46,22 @@ const CHomePage: React.FC = () => {
 };
 
 const CCoinsDisplay: React.FC = () => {
-  //#region Hooks
-  const reactFunctionsRef: React.RefObject<number> = useRef<number>(0);
-  const userDataUnsubscriber: React.MutableRefObject<(()=>void) | undefined> = useRef<()=>void>();
-  const coins: [number, Dispatch<SetStateAction<number>>] = useState<number>(999);
-
-  useEffect(
-    () => {
-      userDataUnsubscriber.current = UsersDatasMgr.sflistenToUserData(
-        FibAuthMgr.sfgetCurUser()?.fgetUId() as string, 
-        (userData) => {
-          console.log(`CustomLog:Current Coins = ${userData.mcoins}`);
-          coins[1](userData.mcoins);
-        }
-      );
-
-      return( 
-        () => {
-          if(userDataUnsubscriber.current != undefined) {
-            userDataUnsubscriber.current();
-            userDataUnsubscriber.current = undefined;
-          }
-        }  
-      );
-    }, 
-    [reactFunctionsRef]
-  );
-  //#endregion
-
   return(
     <View style={{flexDirection: "row", alignItems: "center"}}>
       <MaterialIcons name="attach-money" size={30} />
 
-      <Text style={{fontSize: 25}}>{`${coins[0]}`}</Text>
+      <CStreamBuilder<UserData | undefined>
+        mstreamCreator={() => {
+          return(UsersDatasMgr.sfgetUserDataStream(FibAuthMgr.sfgetCurUser()?.fgetUId() as string));
+        }}
+        mbuilder={(value) => { 
+          if(value == undefined)
+            return(<ActivityIndicator color="blue"></ActivityIndicator>);
+
+          return(<Text style={{fontSize: 20}}>{value.mcoins}</Text>);
+        }}
+        minitialValue={undefined}
+      />
     </View>        
   );
 }
