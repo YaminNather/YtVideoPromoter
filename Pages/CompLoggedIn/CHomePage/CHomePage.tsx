@@ -8,6 +8,7 @@ import { Button, IconButton } from "react-native-paper";
 import FibAuthMgr from "../../../Firebase/FibAuthMgr";
 import {MaterialIcons} from "@expo/vector-icons";
 import UsersDatasMgr from "../../../Firebase/FibFSMgr/UsersDatasMgr/UsersDatasMgr";
+import CLearningFunctionComponentsPage from "../../CLearningFunctionalComponentsPage/CLearningFunctionComponentsPage";
 
 const CHomePage: React.FC = () => {
   const frender: ()=>React.ReactElement = () => {
@@ -34,7 +35,7 @@ const CHomePage: React.FC = () => {
           }}
         />
         
-        <stackNavigator.Screen name="Add Video Page" component={CAddVideoPage} />
+        <stackNavigator.Screen name="Add Video Page" component={CLearningFunctionComponentsPage} />
       </stackNavigator.Navigator>
     );
   };
