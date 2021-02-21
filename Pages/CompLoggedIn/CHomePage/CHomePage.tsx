@@ -11,6 +11,8 @@ import UsersDatasMgr from "../../../Firebase/FibFSMgr/UsersDatasMgr/UsersDatasMg
 import CLearningFunctionComponentsPage from "../../CLearningFunctionalComponentsPage/CLearningFunctionComponentsPage";
 import CStreamBuilder from "../../../Components/CStreamBuilder/CStreamBuilder";
 import UserData from "../../../Models/UserData";
+import CObservableBuilder from "../../../Components/CObservableBuilder/CObservableBuilder";
+import { observable } from "rxjs";
 
 const CHomePage: React.FC = () => {
   const frender: ()=>React.ReactElement = () => {
@@ -50,17 +52,15 @@ const CCoinsDisplay: React.FC = () => {
     <View style={{flexDirection: "row", alignItems: "center"}}>
       <MaterialIcons name="attach-money" size={30} />
 
-      <CStreamBuilder<UserData | undefined>
-        mstreamCreator={() => {
-          return(UsersDatasMgr.sfgetUserDataStream(FibAuthMgr.sfgetCurUser()?.fgetUId() as string));
-        }}
-        mbuilder={(value) => { 
+      <CObservableBuilder<UserData | undefined>
+        minitialValue={undefined}        
+        mobservable={UsersDatasMgr.sfgetUserDataObservable(FibAuthMgr.sfgetCurUser()?.fgetUId() as string)}
+        mbuilder={(value) => {
           if(value == undefined)
-            return(<ActivityIndicator color="blue"></ActivityIndicator>);
+            return(<ActivityIndicator color="blue" />);
 
-          return(<Text style={{fontSize: 20}}>{value.mcoins}</Text>);
+          return(<Text style={{fontSize: 20}}>{`${value.mcoins}`}</Text>);
         }}
-        minitialValue={undefined}
       />
     </View>        
   );
