@@ -3,6 +3,7 @@ import Firebase from "firebase";
 import "firebase/firestore";
 import UserData from "../../../Models/UserData";
 import { MapperStream, ReadableStream, Stream, StreamUpdater } from "../../../Stream/Stream";
+import { Observable } from "rxjs";
 
 type Query = Firebase.firestore.Query;
 type QuerySnapshot = Firebase.firestore.QuerySnapshot;
@@ -38,6 +39,24 @@ export default class UsersDatasMgr {
     );
 
     const unsubscriber: ()=>void = query?.onSnapshot({ next: (value) => streamUpdater.fpush(value) }) as ()=>void;
+
+    return(r);
+  }
+
+  public static sfgetUserDataObservable(userId: string): Observable<UserData | undefined> {
+    const query: Query | undefined = FibFSMgr.sfgetFS()?.collection("Users_Datas").where("User_Id", "==", userId);
+
+    const r: Observable<UserData | undefined> = new Observable<UserData | undefined>(
+      (subscriber) => {
+        const unsubber: (()=>void) | undefined = query?.onSnapshot(
+          {
+            next: (snapshot) => subscriber.next(UserData.fbuildFromDocumentSnapshot(snapshot.docs[0])),
+            error: (err) => {}, complete: () => {}
+          }
+        );
+        return(() => unsubber?.());
+      }
+    );
 
     return(r);
   }
