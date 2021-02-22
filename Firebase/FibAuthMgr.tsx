@@ -67,7 +67,7 @@ export default class FibAuthMgr {
     );
   }
 
-  public static sfgetUserObservable(): Observable<User | undefined> {
+  public static sfgetUsersObservable(): Observable<User | undefined> {
     const r: Observable<User | undefined> = new Observable(
       (subscriber) => {
         const unsubber: Firebase.Unsubscribe = Firebase.auth().onAuthStateChanged(
