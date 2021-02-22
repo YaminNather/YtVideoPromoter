@@ -1,5 +1,6 @@
 import Firebase from "firebase";
 import "firebase/firestore";
+import { Observable } from "rxjs";
 import VideoData from "../../Models/VideoData";
 
 //#region Type Aliases
@@ -139,6 +140,30 @@ export default class FibFSMgr {
     return(unsubscriber);
   }
   
+  public static sfgetVideosDatasObservable(userId: string = "", excludeUserId: string = ""): Observable<VideoData[]> {
+    let query: Query | undefined = FibFSMgr.sfgetFS()?.collection(FibFSMgr.smvideoDatasCollectionName);
+
+    if(userId != "")
+      query = query?.where("User_Id", "==", userId);    
+    else if(excludeUserId != "")
+      query = query?.where("User_Id", "!=", excludeUserId);
+
+      const r: Observable<VideoData[]> = new Observable<VideoData[]>(
+        (subscriber) => {
+          const unsubber: (() => void) | undefined = query?.onSnapshot(
+            (value) => {
+              const videosDatas: VideoData[] = FibFSMgr.sfconvertVideosDatasCollectionToModel(value);
+              subscriber.next(videosDatas);
+            }
+          );
+
+          return(() => unsubber?.());
+        }
+      );
+
+      return(r);
+  }
+
   public static sfunsubscribeListener(unsubscriber: ()=>void): void {
     let index: number = FibFSMgr.smfirestoreListeners.indexOf(unsubscriber);
     if(index == -1)
@@ -153,10 +178,10 @@ export default class FibFSMgr {
       (this.smfirestoreListeners.pop() as ()=>void)();    
   }
 
-  private static async sfconvertVideosDatasCollectionToModel(querySnapshot: QuerySnapshot): Promise<VideoData[]> {
+  private static sfconvertVideosDatasCollectionToModel(querySnapshot: QuerySnapshot): VideoData[] {
     const r: VideoData[] = [];
     for(const documentSnapshot of querySnapshot.docs) {      
-      const videoData: VideoData = await VideoData.sfbuildFromDocumentSnapshot(documentSnapshot);
+      const videoData: VideoData = VideoData.sfbuildFromDocumentSnapshot(documentSnapshot);
       r.push(videoData);
     }
 
