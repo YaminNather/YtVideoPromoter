@@ -24,17 +24,17 @@ export default class VideoData {
     return(r);
   }
 
-  static async sfbuildFromDocumentSnapshot(documentSnapshot: QueryDocumentSnapshot): Promise<VideoData> {
+  static  sfbuildFromDocumentSnapshot(documentSnapshot: QueryDocumentSnapshot): VideoData {
     const r: VideoData = new VideoData(
       documentSnapshot.id, documentSnapshot.get("User_Id"), documentSnapshot.get("Video_Id"),
       documentSnapshot.get("Views"), documentSnapshot.get("Duration")
     );
-    await r.fgetDataFromVideoId();
+    r.fgetDataFromVideoId();
     
     return(r);
   }  
 
-  public async fgetDataFromVideoId(): Promise<void> {
+  public fgetDataFromVideoId(): void {
     this.mthumbnailURL = YoutubeUtilities.sfgetVideoThumbnailURL(this.mvideoId);
   }
 

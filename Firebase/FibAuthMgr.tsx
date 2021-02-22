@@ -1,5 +1,6 @@
 import Firebase from "firebase";
 import "firebase/auth";
+import { Observable } from "rxjs";
 import User from "../Models/User";
 import FibFSMgr from "./FibFSMgr/FibFSMgr";
 
@@ -64,5 +65,26 @@ export default class FibAuthMgr {
           func(user);
       }
     );
+  }
+
+  public static sfgetUsersObservable(): Observable<User | undefined> {
+    const r: Observable<User | undefined> = new Observable(
+      (subscriber) => {
+        const unsubber: Firebase.Unsubscribe = Firebase.auth().onAuthStateChanged(
+          (user) => {
+            if(user == undefined) {
+              subscriber.next(undefined);
+              return;
+            }
+
+            subscriber.next(User.sfbuildFromFibUser(user));
+          }
+        );
+
+        return(() => unsubber());
+      }      
+    );    
+    
+    return(r);
   }
 }

@@ -15,7 +15,6 @@ export class ContextData {
 }
 
 export class State {
-  public mvideosDatas?: VideoData[] = undefined;
   public minDeleteState: boolean = false;
   public misDeleting: boolean = false;
 }
