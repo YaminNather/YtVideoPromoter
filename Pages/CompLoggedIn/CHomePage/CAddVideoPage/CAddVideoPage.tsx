@@ -8,6 +8,7 @@ import FibFSMgr from "../../../../Firebase/FibFSMgr/FibFSMgr";
 import YoutubeUtilities from "../../../../YoutubeUtilities/YoutubeUtilities";
 
 const CAddVideoPage : FC = (props) => {
+  //#region Hooks 
   const [videoURL, setVideoURL]: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");  
   const videoThumbnailURL: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
   
@@ -26,6 +27,7 @@ const CAddVideoPage : FC = (props) => {
       }
     }
   );
+  //#endregion
     
   const fbuildVideoThumbnail: ()=>React.ReactElement = () => {
     return(
