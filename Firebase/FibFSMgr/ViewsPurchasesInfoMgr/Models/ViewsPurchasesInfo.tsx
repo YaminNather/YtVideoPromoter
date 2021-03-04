@@ -7,16 +7,38 @@ type DocumentSnapshot = Firebase.firestore.DocumentSnapshot;
 export default class ViewsPurchasesInfo {
   constructor(snapshot: DocumentSnapshot) {
     this.mviews = new Map<number, number>();
-    snapshot.get("Views").forEach(
+    const views: any =  snapshot.get("Views");
+    views.forEach(
       (element: any) => this.mviews.set(element.Views, element.Amount)    
     );
 
     this.mdurations = new Map<number, number>();
-    snapshot.get("Durations").foreach(
-      (element: any) => this.mdurations.set(element.Time, element.Amount)
+    const durations: any = snapshot.get("Durations");
+    durations.forEach(
+      (element: any) => this.mdurations.set(element.Duration, element.Amount)
     );
   }
 
+  public fgetViews(): Map<number, number> { 
+    const r: Map<number, number> = new Map<number, number>();
+    this.mviews.forEach(
+      (key, value) => r.set(key, value)
+    );
+
+    return r; 
+  }
+
+  public fgetDurations(): Map<number, number> {
+    const r: Map<number, number> = new Map<number, number>();
+    this.mdurations.forEach(
+      (key, value) => r.set(key, value)
+    );
+     
+    return r; 
+  }
+
+  // #region Variables
   private mviews: Map<number, number>;
   private mdurations: Map<number, number>;  
+  // #endregion
 }

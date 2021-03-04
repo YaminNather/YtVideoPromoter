@@ -7,8 +7,8 @@ import ViewsPurchasesInfo from "./Models/ViewsPurchasesInfo";
 type CollectionReference = Firebase.firestore.CollectionReference;
 
 export default class ViewsPurchasesInfoMgr {
-  static sflistenToViewsPurchasesInfo(): Observable<ViewsPurchasesInfo> {
-    const collection: CollectionReference | undefined = FibFSMgr.sfgetFS()?.collection("Views_Purchases_Info");
+  static sfgetViewsPurchasesInfoObservable(): Observable<ViewsPurchasesInfo> {
+    const collection: CollectionReference | undefined = FibFSMgr.sfgetFS()?.collection("Views_Purchases_Infos");
     
     const r: Observable<ViewsPurchasesInfo> = new Observable(
       (subscriber) => {

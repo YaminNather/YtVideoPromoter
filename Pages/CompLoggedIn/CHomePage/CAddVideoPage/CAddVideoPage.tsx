@@ -1,23 +1,39 @@
 import { useNavigation } from "@react-navigation/native";
-import React, {FC, Dispatch, SetStateAction, useEffect, useRef} from "react";
+import React, {FC, useEffect, MutableRefObject} from "react";
 import {Image, View} from "react-native";
 import {Button, TextInput, Text, ActivityIndicator, Modal} from "react-native-paper";
+import { Subscription } from "rxjs";
 import CDropdown, { ItemData } from "../../../../Components/CompDropdown/CDropdown";
 import FibAuthMgr from "../../../../Firebase/FibAuthMgr";
 import FibFSMgr from "../../../../Firebase/FibFSMgr/FibFSMgr";
+import ViewsPurchasesInfo from "../../../../Firebase/FibFSMgr/ViewsPurchasesInfoMgr/Models/ViewsPurchasesInfo";
+import ViewsPurchasesInfoMgr from "../../../../Firebase/FibFSMgr/ViewsPurchasesInfoMgr/ViewsPurchasesInfoMgr";
 import YoutubeUtilities from "../../../../YoutubeUtilities/YoutubeUtilities";
 
 const CAddVideoPage : FC = (props) => {
   //#region Hooks 
-  const [videoURL, setVideoURL]: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");  
-  const videoThumbnailURL: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
+  const refForReactLifetimeStuff: MutableRefObject<boolean> = React.useRef<boolean>(false);
+
+  const [videoURL, setVideoURL] = React.useState<string>("");  
+  const videoThumbnailURL = React.useState<string>("");
   
-  const views: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
-    React.useState<number | undefined>(undefined);  
-  const duration: [number | undefined, Dispatch<SetStateAction<number | undefined>>] = 
-    React.useState<number | undefined>(undefined);
-  const isAddingToFirestore: [boolean, Dispatch<SetStateAction<boolean>>] = React.useState<boolean>(false);
+  const viewsPurchasesInfo = React.useState<ViewsPurchasesInfo | undefined>();
+
+  const views = React.useState<number | undefined>(undefined);  
+  const duration = React.useState<number | undefined>(undefined);
+  const isAddingToFirestore = React.useState<boolean>(false);
   const navigation = useNavigation();
+
+  // Lifetime hook.
+  useEffect(
+    () => {
+      const subscription: Subscription = ViewsPurchasesInfoMgr.sfgetViewsPurchasesInfoObservable().subscribe(
+        (value) => viewsPurchasesInfo[1](value)
+      );
+
+      return( () => subscription.unsubscribe() );
+    }, [refForReactLifetimeStuff]
+  );
 
   useEffect(
     () => {
@@ -40,10 +56,12 @@ const CAddVideoPage : FC = (props) => {
   };
 
   const fbuildViewsDropdown: ()=>React.ReactElement = () => {
-    const itemsDatas: ItemData<number>[] = [
-      new ItemData<number>(100, "100"), new ItemData<number>(200, "200"), new ItemData<number>(300, "300"), 
-      new ItemData<number>(400, "400")
-    ];
+    const itemsDatas: ItemData<number>[] = [];
+
+    viewsPurchasesInfo[0]?.fgetViews().forEach(
+      (views, amount) => itemsDatas.push(new ItemData(views, `${views} for ${amount} coins`))
+    );
+
     return(
       <CDropdown<number>
         mheading="Views" mitemsDatas={itemsDatas} mvalue={views[0]} mcontainerStyle={{marginTop: 20}} 
@@ -53,14 +71,15 @@ const CAddVideoPage : FC = (props) => {
   };
 
   const fbuildDurationDropdown: ()=>React.ReactElement = () => {
-    const itemsDatas: ItemData<number>[] = [
-      new ItemData<number>(60, "1 minute"), new ItemData<number>(60 * 5, "5 minutes"), 
-      new ItemData<number>(60 * 10, "10 minutes"), new ItemData<number>(60 * 30, "30 minutes")
-    ];
+    const itemsDatas: ItemData<number>[] = [];
+
+    viewsPurchasesInfo[0]?.fgetDurations().forEach(
+      (duration, amount) => itemsDatas.push(new ItemData(duration, `${duration} for ${amount} coins`))
+    );
 
     return(
       <CDropdown<number> 
-        mheading="Duration" mitemsDatas={itemsDatas} mvalue={duration[0]} mcontainerStyle={{marginTop: 20, marginLeft: 20}}
+        mheading="Duration (sec)" mitemsDatas={itemsDatas} mvalue={duration[0]} mcontainerStyle={{marginTop: 20, marginLeft: 20}}
         monChange={(value) => duration[1](value)}  
       />
     );
@@ -95,6 +114,9 @@ const CAddVideoPage : FC = (props) => {
   }
 
   const frender: ()=>React.ReactElement = () => {
+    if(viewsPurchasesInfo[0] == null)
+      return( <ActivityIndicator size="large" color="blue" /> );
+
     return(
       <View style={{width: "100%", height: "100%"}}>
         <View style={{backgroundColor: "#DDDDDD", paddingVertical: 10, flex: 1, justifyContent: "center"}}>

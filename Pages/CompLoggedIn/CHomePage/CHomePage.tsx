@@ -39,12 +39,12 @@ const CHomePage: React.FC = () => {
           }}
         />
         
-        <stackNavigator.Screen name="Add Video Page" component={CLearningFunctionComponentsPage} />
+        <stackNavigator.Screen name="Add Video Page" component={CAddVideoPage} />
       </stackNavigator.Navigator>
     );
   };
 
-  return(frender());
+  return frender();
 };
 
 const CCoinsDisplay: React.FC = () => {
