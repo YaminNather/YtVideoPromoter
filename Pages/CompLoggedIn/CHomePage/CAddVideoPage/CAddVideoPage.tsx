@@ -115,7 +115,11 @@ const CAddVideoPage : FC = (props) => {
 
   const frender: ()=>React.ReactElement = () => {
     if(viewsPurchasesInfo[0] == null)
-      return( <ActivityIndicator size="large" color="blue" /> );
+      return(
+        <View style={{width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}>
+          <ActivityIndicator size="large" color="blue" /> 
+        </View>
+      );
 
     return(
       <View style={{width: "100%", height: "100%"}}>
