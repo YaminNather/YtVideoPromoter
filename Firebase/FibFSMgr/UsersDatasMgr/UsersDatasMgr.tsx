@@ -5,8 +5,11 @@ import UserData from "../../../Models/UserData";
 import { MapperStream, ReadableStream, Stream, StreamUpdater } from "../../../Stream/Stream";
 import { Observable } from "rxjs";
 
+type CollectionReference = Firebase.firestore.CollectionReference;
 type Query = Firebase.firestore.Query;
 type QuerySnapshot = Firebase.firestore.QuerySnapshot;
+type DocumentReference = Firebase.firestore.DocumentReference;
+type DocumentSnapshot = Firebase.firestore.DocumentSnapshot;
 
 export default class UsersDatasMgr {
   public static sflistenToUserData(userId: string, processor: (userData: UserData)=>void): (()=>void) | undefined {
@@ -43,8 +46,23 @@ export default class UsersDatasMgr {
     return(r);
   }
 
+  public static async sfupdateUserData(userId: string, coins: number | undefined): Promise<void> {
+    const docRef: DocumentReference = UsersDatasMgr.sfgetColtnRef().doc(userId);
+    const docSnapshot: DocumentSnapshot = await docRef.get();
+
+    if(!docSnapshot.exists)
+      return;
+
+    const prevData: any = docSnapshot.data();
+
+    if(coins != undefined)
+      prevData.Coins = coins;
+      
+    await docRef.update(prevData);
+  }  
+
   public static sfgetUserDataObservable(userId: string): Observable<UserData | undefined> {
-    const query: Query | undefined = FibFSMgr.sfgetFS()?.collection("Users_Datas").where("User_Id", "==", userId);
+    const query: Query | undefined = UsersDatasMgr.sfgetColtnRef().where("User_Id", "==", userId);
 
     const r: Observable<UserData | undefined> = new Observable<UserData | undefined>(
       (subscriber) => {
@@ -59,5 +77,9 @@ export default class UsersDatasMgr {
     );
 
     return(r);
+  }
+
+  private static sfgetColtnRef(): CollectionReference {
+    return FibFSMgr.sfgetFS()?.collection("Users_Datas") as CollectionReference;
   }
 }

@@ -39,7 +39,16 @@ const CHomePage: React.FC = () => {
           }}
         />
         
-        <stackNavigator.Screen name="Add Video Page" component={CAddVideoPage} />
+        <stackNavigator.Screen name="Add Video Page" 
+          component={CAddVideoPage} 
+          options={{
+            headerRight: () => (
+              <View style={{padding: 10}}>
+                <CCoinsDisplay />
+              </View>
+            )
+          }}
+        />
       </stackNavigator.Navigator>
     );
   };

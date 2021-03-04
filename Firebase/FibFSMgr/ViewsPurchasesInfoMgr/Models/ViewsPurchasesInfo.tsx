@@ -22,7 +22,7 @@ export default class ViewsPurchasesInfo {
   public fgetViews(): Map<number, number> { 
     const r: Map<number, number> = new Map<number, number>();
     this.mviews.forEach(
-      (key, value) => r.set(key, value)
+      (value, key) => r.set(key, value)
     );
 
     return r; 
@@ -31,7 +31,7 @@ export default class ViewsPurchasesInfo {
   public fgetDurations(): Map<number, number> {
     const r: Map<number, number> = new Map<number, number>();
     this.mdurations.forEach(
-      (key, value) => r.set(key, value)
+      (value, key) => r.set(key, value)
     );
      
     return r; 

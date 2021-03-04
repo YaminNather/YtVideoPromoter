@@ -6,6 +6,7 @@ import { Subscription } from "rxjs";
 import CDropdown, { ItemData } from "../../../../Components/CompDropdown/CDropdown";
 import FibAuthMgr from "../../../../Firebase/FibAuthMgr";
 import FibFSMgr from "../../../../Firebase/FibFSMgr/FibFSMgr";
+import UsersDatasMgr from "../../../../Firebase/FibFSMgr/UsersDatasMgr/UsersDatasMgr";
 import ViewsPurchasesInfo from "../../../../Firebase/FibFSMgr/ViewsPurchasesInfoMgr/Models/ViewsPurchasesInfo";
 import ViewsPurchasesInfoMgr from "../../../../Firebase/FibFSMgr/ViewsPurchasesInfoMgr/ViewsPurchasesInfoMgr";
 import YoutubeUtilities from "../../../../YoutubeUtilities/YoutubeUtilities";
@@ -18,20 +19,31 @@ const CAddVideoPage : FC = (props) => {
   const videoThumbnailURL = React.useState<string>("");
   
   const viewsPurchasesInfo = React.useState<ViewsPurchasesInfo | undefined>();
-
   const views = React.useState<number | undefined>(undefined);  
   const duration = React.useState<number | undefined>(undefined);
+
+  const coins = React.useState<number>(-1);
+
   const isAddingToFirestore = React.useState<boolean>(false);
+  
   const navigation = useNavigation();
 
   // Lifetime hook.
   useEffect(
     () => {
-      const subscription: Subscription = ViewsPurchasesInfoMgr.sfgetViewsPurchasesInfoObservable().subscribe(
-        (value) => viewsPurchasesInfo[1](value)
-      );
+      const viewsPurchasesInfoSubscription: Subscription = ViewsPurchasesInfoMgr.sfgetViewsPurchasesInfoObservable().
+        subscribe((value) => viewsPurchasesInfo[1](value));
 
-      return( () => subscription.unsubscribe() );
+      const coinsSubscription: Subscription = UsersDatasMgr.
+        sfgetUserDataObservable(FibAuthMgr.sfgetCurUser()?.fgetUId() as string).
+        subscribe((value) => coins[1](value?.mcoins as number));      
+
+      return( 
+        () => {
+          viewsPurchasesInfoSubscription.unsubscribe();          
+          coinsSubscription.unsubscribe();
+        } 
+      );
     }, [refForReactLifetimeStuff]
   );
 
@@ -44,6 +56,20 @@ const CAddVideoPage : FC = (props) => {
     }
   );
   //#endregion
+
+  const fgetInitialLoadStatus: ()=>boolean = () => {
+    if(viewsPurchasesInfo[0] == undefined || coins[0] < 0)
+      return false;
+
+    return true;
+  } 
+
+  const fvalidate: ()=>boolean = () => {
+    if(views[0] == undefined || duration[0] == undefined || coins[0] - fgetTotal() < 1)
+      return false;    
+
+    return true;
+  }
     
   const fbuildVideoThumbnail: ()=>React.ReactElement = () => {
     return(
@@ -59,7 +85,7 @@ const CAddVideoPage : FC = (props) => {
     const itemsDatas: ItemData<number>[] = [];
 
     viewsPurchasesInfo[0]?.fgetViews().forEach(
-      (views, amount) => itemsDatas.push(new ItemData(views, `${views} for ${amount} coins`))
+      (amount, views) => itemsDatas.push(new ItemData(views, `${views} for ${amount} coins`))
     );
 
     return(
@@ -74,7 +100,7 @@ const CAddVideoPage : FC = (props) => {
     const itemsDatas: ItemData<number>[] = [];
 
     viewsPurchasesInfo[0]?.fgetDurations().forEach(
-      (duration, amount) => itemsDatas.push(new ItemData(duration, `${duration} for ${amount} coins`))
+      (amount, duration) => itemsDatas.push(new ItemData(duration, `${duration} for x${amount} coins`))
     );
 
     return(
@@ -85,11 +111,28 @@ const CAddVideoPage : FC = (props) => {
     );
   };
 
-  const fbuildAddVideoBtn: ()=>React.ReactElement = () => {
+  const fbuildTotalLbl: ()=>React.ReactElement = () => {
+    if(views[0] == undefined || duration[0] == undefined)
+      return <></>;
+    const total: number = fgetTotal();    
+
+    return(
+      <View style={{width: "100%", alignItems: "center"}}>
+        <Text style={{marginTop: 20, fontSize: 20}}>{`Total = ${total} coins`}</Text>
+      </View>
+    );
+  };
+
+  const fbuildAddVideoBtn: ()=>React.ReactElement = () => {          
     return(
       <Button 
         mode="contained" 
+        style={{marginTop: 20}}
+        color={(!fvalidate()) ? "grey" : undefined}
         onPress={async () => {
+          if(!fvalidate())
+            return;
+
           console.log(`CustomLog:VideoId = ${YoutubeUtilities.sfextractVideoIdFromURL(videoURL)}, views = ${views[0]}, duration = ${duration[0]}`);          
           
           const videoId: string | undefined = YoutubeUtilities.sfextractVideoIdFromURL(videoURL);
@@ -100,21 +143,32 @@ const CAddVideoPage : FC = (props) => {
 
               isAddingToFirestore[1](true);
               await FibFSMgr.sfaddVideoData(FibAuthMgr.sfgetCurUser()?.fgetUId() as string, videoId, views[0], duration[0]);
+
+
+              await UsersDatasMgr.sfupdateUserData(FibAuthMgr.sfgetCurUser()?.fgetUId() as string, coins[0] - fgetTotal());
               navigation.goBack();
             }
             else 
               console.log("CustomLog:VideoData already exists");
           }
-        }} 
-        style={{marginTop: 20}}
+        }}         
       >
         Add Video
       </Button>
     );
+  }  
+
+  const fgetTotal: ()=>number = () => {
+    if(views[0] == undefined || duration[0] == undefined)
+      return -1;
+
+    const coinsForViews: number = viewsPurchasesInfo[0]?.fgetViews().get(views[0])as number;
+    const multiplierForDuration: number = viewsPurchasesInfo[0]?.fgetDurations().get(duration[0]) as number;
+    return coinsForViews * multiplierForDuration;    
   }
 
   const frender: ()=>React.ReactElement = () => {
-    if(viewsPurchasesInfo[0] == null)
+    if(!fgetInitialLoadStatus())
       return(
         <View style={{width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}>
           <ActivityIndicator size="large" color="blue" /> 
@@ -144,6 +198,8 @@ const CAddVideoPage : FC = (props) => {
             
             {fbuildDurationDropdown()}
           </View>
+
+          {fbuildTotalLbl()}
             
           {fbuildAddVideoBtn()}
         </View>
@@ -154,6 +210,7 @@ const CAddVideoPage : FC = (props) => {
       </View>
     );
   };
+  
 
   return frender();
 };
