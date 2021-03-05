@@ -27,23 +27,10 @@ export default class UsersDatasMgr {
     return unsubscriber;
   }
 
-  public static sfgetUserDataStream(userId: string): Stream<UserData | undefined> {
-    const query: Query | undefined = FibFSMgr.sfgetFS()?.collection("Users_Datas").where("User_Id", "==", userId);
+  public static async sfaddUserData(userId: string): Promise<void> {
+    const value: {User_Id: string, Coins: number} = {User_Id: userId, Coins: 100}; 
     
-    const streamUpdater: StreamUpdater<QuerySnapshot> = new StreamUpdater<QuerySnapshot>();
-    const querySnapshotStream: ReadableStream<QuerySnapshot> = new ReadableStream<QuerySnapshot>(
-      streamUpdater, () => unsubscriber()
-    );
-    
-    const r: MapperStream<UserData | undefined, QuerySnapshot> = 
-    new MapperStream<UserData | undefined, QuerySnapshot>(
-      querySnapshotStream, (value) => UserData.fbuildFromDocumentSnapshot(value.docs[0]), 
-      () => querySnapshotStream.fdispose() 
-    );
-
-    const unsubscriber: ()=>void = query?.onSnapshot({ next: (value) => streamUpdater.fpush(value) }) as ()=>void;
-
-    return(r);
+    await UsersDatasMgr.sfgetColtnRef().doc(userId).set(value);
   }
 
   public static async sfupdateUserData(userId: string, coins: number | undefined): Promise<void> {
@@ -59,7 +46,13 @@ export default class UsersDatasMgr {
       prevData.Coins = coins;
       
     await docRef.update(prevData);
-  }  
+  }
+
+  public static async sfgetUserData(uId: string): Promise<UserData | undefined> {
+    const snapshot: DocumentSnapshot = await UsersDatasMgr.sfgetColtnRef().doc(uId).get();
+
+    return(UserData.fbuildFromDocumentSnapshot(snapshot));
+  }
 
   public static sfgetUserDataObservable(userId: string): Observable<UserData | undefined> {
     const query: Query | undefined = UsersDatasMgr.sfgetColtnRef().where("User_Id", "==", userId);
