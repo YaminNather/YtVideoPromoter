@@ -29,7 +29,8 @@
     "react-native-youtube-iframe": "^1.4.0",
     "react-vector-icons": "0.0.1",
     "rxjs": "^6.6.3",
-    "stream": "0.0.2"
+    "stream": "0.0.2",
+    "expo-clipboard": "~1.0.1"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
