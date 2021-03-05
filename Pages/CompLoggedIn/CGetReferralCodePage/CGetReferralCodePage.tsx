@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { ToastAndroid, View } from "react-native";
+import { Share, ShareAction, ToastAndroid, View } from "react-native";
 import { Button, IconButton, Text, TextInput } from "react-native-paper";
 import FibAuthMgr from "../../../Firebase/FibAuthMgr";
 import Clipboard from "expo-clipboard"; 
@@ -37,7 +37,20 @@ const CGetReferralCodePage: FC = (props) => {
 
         <View style={{height: 20}} />
 
-        <Button mode="contained" onPress={()=>{}}>Refer Now</Button>
+        <Button 
+          mode="contained" 
+          onPress={async () => {
+            const result: ShareAction = await Share.share(
+              {
+                title: "Download YtVideoPromoter now!!",
+                message: `Download YtVideoPromoter now!!\nUse referral code ${uId} to get 300 coins for FREE!!!`,
+                url: "https://www.google.com"
+              }
+            );
+          }}
+        >
+          Refer Now
+        </Button>
       </View>
     );
   };
