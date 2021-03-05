@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { StyleProp, StyleSheet, Text, TextStyle, View } from "react-native";
-import {TextInput, Button} from "react-native-paper"; 
+import {TextInput, Button, ActivityIndicator} from "react-native-paper"; 
+import CLoader from "../../Components/CLoader/CLoader";
 import FibAuthMgr from "../../Firebase/FibAuthMgr";
 import UsersDatasMgr from "../../Firebase/FibFSMgr/UsersDatasMgr/UsersDatasMgr";
 import User from "../../Models/User";
@@ -12,6 +13,8 @@ class State {
   public mcurReferralCode: string = "";
 
   public merrorMsg: string = "";
+
+  public misBusy: boolean = false;
 }
 
 export default class CompRegisterPage extends React.Component<{}, State> {
@@ -20,6 +23,7 @@ export default class CompRegisterPage extends React.Component<{}, State> {
 
     this.state = new State();
 
+    this.fbuildActualPage = this.fbuildActualPage.bind(this);
     this.fregister = this.fregister.bind(this);
   }
 
@@ -29,51 +33,67 @@ export default class CompRegisterPage extends React.Component<{}, State> {
         style={{
           width: "100%", flex: 1, paddingHorizontal: 20, justifyContent: "center", alignItems: "center"
         }}
-      >           
-          <CustomTextInput 
-            mlabel="Email" mvalue={this.state.mcurEmail} 
-            monChangeText={(text) => { this.setState({mcurEmail: text}); }} 
-          />         
+      >    
+        <CLoader 
+          misLoading={this.state.misBusy}
+          mloadingComponent={() => (<ActivityIndicator color="blue" size="large"/>)}
+          mbuildComponent={this.fbuildActualPage}
+        />
+      </View>
+    );
+  }
 
-          <CustomTextInput 
-            mlabel="Password" mtextContentType="password" mvalue={this.state.mcurPassword} 
-            monChangeText={(text) => { this.setState({mcurPassword: text}); }} 
-            mstyle={{marginTop: 20}}
-          /> 
+  private fbuildActualPage(): React.ReactElement {
+    return(
+      <>
+        <CustomTextInput 
+          mlabel="Email" mvalue={this.state.mcurEmail} 
+          monChangeText={(text) => { this.setState({mcurEmail: text}); }} 
+        />         
 
-          <CustomTextInput 
-            mlabel="Referral Code (Optional)" mvalue={this.state.mcurReferralCode} mstyle={{marginTop: 20}}
-            monChangeText={(text) => { this.setState({mcurReferralCode: text}); }}
-          />
-          
-          <Button mode="contained" style={{marginTop: 20}} onPress={this.fregister}>Register With EAP</Button>
+        <CustomTextInput 
+          mlabel="Password" mtextContentType="password" mvalue={this.state.mcurPassword} 
+          monChangeText={(text) => { this.setState({mcurPassword: text}); }} 
+          mstyle={{marginTop: 20}}
+        /> 
 
-          <View style={{height: 20}} />
+        <CustomTextInput 
+          mlabel="Referral Code (Optional)" mvalue={this.state.mcurReferralCode} mstyle={{marginTop: 20}}
+          monChangeText={(text) => { this.setState({mcurReferralCode: text}); }}
+        />
+        
+        <Button mode="contained" style={{marginTop: 20}} onPress={this.fregister}>Register With EAP</Button>
 
-          {this.fbuildErrorMsg()}
-        </View>
+        <View style={{height: 20}} />
+
+        {this.fbuildErrorMsg()}      
+      </>
     );
   }
 
   private async fregister(): Promise<void> {
+    this.fsetBusyState(true);
+
     const validationResult: boolean = await this.fvalidate();
     
     if(!validationResult) {
-      this.setState({merrorMsg: "Invalid entry"});
-      return;
+      this.setState({merrorMsg: "Invalid entry", misBusy: false});      
+      return;            
     }
     
     this.setState({merrorMsg: ""});              
-    const newUser: User = await FibAuthMgr.sfregisterWithEAP(this.state.mcurEmail, this.state.mcurPassword);
-    
-    if(this.state.mcurReferralCode != "") {
-      const newUserUserData: UserData = await UsersDatasMgr.sfgetUserData(newUser.fgetUId()) as UserData;                
-      const referredUserUserData: UserData = await UsersDatasMgr.sfgetUserData(this.state.mcurReferralCode) as UserData;
+      const newUser: User = await FibAuthMgr.sfregisterWithEAP(this.state.mcurEmail, this.state.mcurPassword);
+      
+      if(this.state.mcurReferralCode != "") {
+        const newUserUserData: UserData = await UsersDatasMgr.sfgetUserData(newUser.fgetUId()) as UserData;                
+        const referredUserUserData: UserData = await UsersDatasMgr.sfgetUserData(this.state.mcurReferralCode) as UserData;
 
-      await UsersDatasMgr.sfupdateUserData(newUser.fgetUId(), newUserUserData.mcoins + 300);
-      await UsersDatasMgr.sfupdateUserData(this.state.mcurReferralCode, referredUserUserData.mcoins + 300);
-    }
+        await UsersDatasMgr.sfupdateUserData(newUser.fgetUId(), newUserUserData.mcoins + 300);
+        await UsersDatasMgr.sfupdateUserData(this.state.mcurReferralCode, referredUserUserData.mcoins + 300);
+      }   
   }
+
+  private fsetBusyState(value: boolean): void { this.setState({misBusy: value}); }
 
   private async fvalidate(): Promise<boolean> {
     if(this.state.mcurEmail == "" || this.state.mcurPassword == "")
