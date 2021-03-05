@@ -3,15 +3,18 @@ import "firebase/auth";
 import { Observable } from "rxjs";
 import User from "../Models/User";
 import FibFSMgr from "./FibFSMgr/FibFSMgr";
+import UsersDatasMgr from "./FibFSMgr/UsersDatasMgr/UsersDatasMgr";
 
 type UserCredential = Firebase.auth.UserCredential;
 
 export default class FibAuthMgr {
   public static async sfregisterWithEAP(email: string, password: string): Promise<User> {
     const userCred: UserCredential = 
-      await Firebase.auth().createUserWithEmailAndPassword(email, password);
+    await Firebase.auth().createUserWithEmailAndPassword(email, password);
+    
+    await UsersDatasMgr.sfaddUserData(userCred.user?.uid as string);
 
-      return User.sfbuildFromFibUser(userCred.user as Firebase.User);
+    return User.sfbuildFromFibUser(userCred.user as Firebase.User);
   }
 
   public static async sfsignInAnon(): Promise<User | undefined> {
@@ -86,5 +89,15 @@ export default class FibAuthMgr {
     );    
     
     return(r);
+  }
+
+  public static async sfdoesUserExist(uId: string): Promise<boolean> {
+    try {
+      await FibFSMgr.sfgetFS()?.collection("Users_Datas").doc(uId).get();
+      return true;
+    }
+    catch (error) {
+      return false;
+    }
   }
 }
