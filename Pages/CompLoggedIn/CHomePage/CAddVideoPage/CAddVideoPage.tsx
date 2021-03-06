@@ -7,8 +7,8 @@ import CDropdown, { ItemData } from "../../../../Components/CompDropdown/CDropdo
 import FibAuthMgr from "../../../../Firebase/FibAuthMgr";
 import FibFSMgr from "../../../../Firebase/FibFSMgr/FibFSMgr";
 import UsersDatasMgr from "../../../../Firebase/FibFSMgr/UsersDatasMgr/UsersDatasMgr";
-import ViewsPurchasesInfo from "../../../../Firebase/FibFSMgr/ViewsPurchasesInfoMgr/Models/ViewsPurchasesInfo";
-import ViewsPurchasesInfoMgr from "../../../../Firebase/FibFSMgr/ViewsPurchasesInfoMgr/ViewsPurchasesInfoMgr";
+import ViewsPurchaseInfos from "../../../../Firebase/FibFSMgr/ViewsPurchasesInfoMgr/Models/ViewsPurchasesInfo";
+import ViewsPurchaseInfosMgr from "../../../../Firebase/FibFSMgr/ViewsPurchasesInfoMgr/ViewsPurchasesInfoMgr";
 import YoutubeUtilities from "../../../../YoutubeUtilities/YoutubeUtilities";
 
 const CAddVideoPage : FC = (props) => {
@@ -18,7 +18,7 @@ const CAddVideoPage : FC = (props) => {
   const [videoURL, setVideoURL] = React.useState<string>("");  
   const videoThumbnailURL = React.useState<string>("");
   
-  const viewsPurchasesInfo = React.useState<ViewsPurchasesInfo | undefined>();
+  const viewsPurchasesInfo = React.useState<ViewsPurchaseInfos | undefined>();
   const views = React.useState<number | undefined>(undefined);  
   const duration = React.useState<number | undefined>(undefined);
 
@@ -31,7 +31,7 @@ const CAddVideoPage : FC = (props) => {
   // Lifetime hook.
   useEffect(
     () => {
-      const viewsPurchasesInfoSubscription: Subscription = ViewsPurchasesInfoMgr.sfgetViewsPurchasesInfoObservable().
+      const viewsPurchasesInfoSubscription: Subscription = ViewsPurchaseInfosMgr.sfgetViewsPurchasesInfoObservable().
         subscribe((value) => viewsPurchasesInfo[1](value));
 
       const coinsSubscription: Subscription = UsersDatasMgr.
@@ -85,7 +85,7 @@ const CAddVideoPage : FC = (props) => {
     const itemsDatas: ItemData<number>[] = [];
 
     viewsPurchasesInfo[0]?.fgetViews().forEach(
-      (amount, views) => itemsDatas.push(new ItemData(views, `${views} for ${amount} coins`))
+      (value) => itemsDatas.push(new ItemData(value.mviews, `${value.mviews} for ${value.mamount} coins`))
     );
 
     return(
@@ -100,7 +100,7 @@ const CAddVideoPage : FC = (props) => {
     const itemsDatas: ItemData<number>[] = [];
 
     viewsPurchasesInfo[0]?.fgetDurations().forEach(
-      (amount, duration) => itemsDatas.push(new ItemData(duration, `${duration} for x${amount} coins`))
+      (value) => itemsDatas.push(new ItemData(value.mduration, `${value.mduration} for x${value.mamount} coins`))
     );
 
     return(
@@ -162,8 +162,9 @@ const CAddVideoPage : FC = (props) => {
     if(views[0] == undefined || duration[0] == undefined)
       return -1;
 
-    const coinsForViews: number = viewsPurchasesInfo[0]?.fgetViews().get(views[0])as number;
-    const multiplierForDuration: number = viewsPurchasesInfo[0]?.fgetDurations().get(duration[0]) as number;
+    const coinsForViews: number = viewsPurchasesInfo[0]?.fgetViews().get(views[0])?.mamount as number;
+    const multiplierForDuration: number = viewsPurchasesInfo[0]?.fgetDurations().get(duration[0])?.mamount as number;
+
     return coinsForViews * multiplierForDuration;    
   }
 
