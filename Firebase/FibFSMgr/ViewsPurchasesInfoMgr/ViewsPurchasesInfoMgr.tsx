@@ -2,18 +2,19 @@ import { Observable } from "rxjs";
 import Firebase from "firebase";
 import "firebase/firestore";
 import FibFSMgr from "../FibFSMgr";
-import ViewsPurchasesInfo from "./Models/ViewsPurchasesInfo";
+import ViewsPurchaseInfos from "./Models/ViewsPurchasesInfo";
 
 type CollectionReference = Firebase.firestore.CollectionReference;
+type DocumentReference = Firebase.firestore.DocumentReference;
 
-export default class ViewsPurchasesInfoMgr {
-  static sfgetViewsPurchasesInfoObservable(): Observable<ViewsPurchasesInfo> {
-    const collection: CollectionReference | undefined = FibFSMgr.sfgetFS()?.collection("Views_Purchases_Infos");
+export default class ViewsPurchaseInfosMgr {
+  public static sfgetViewsPurchasesInfoObservable(): Observable<ViewsPurchaseInfos> {
+    const docRef: DocumentReference | undefined = FibFSMgr.sfgetFS()?.collection("Common_Datas").doc("Views_Purchases_Infos");
     
-    const r: Observable<ViewsPurchasesInfo> = new Observable(
+    const r: Observable<ViewsPurchaseInfos> = new Observable(
       (subscriber) => {
-        const unsubscriber: (()=>void) | undefined = collection?.doc("Value").onSnapshot(
-          { next: (snapshot) => subscriber.next(new ViewsPurchasesInfo(snapshot)) }          
+        const unsubscriber: (()=>void) | undefined = docRef?.onSnapshot(
+          { next: (snapshot) => subscriber.next(new ViewsPurchaseInfos(snapshot)) }          
         );
 
         return(() => unsubscriber?.());
