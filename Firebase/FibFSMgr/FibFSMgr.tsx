@@ -8,6 +8,7 @@ type Firestore = Firebase.firestore.Firestore;
 type DocumentData = Firebase.firestore.DocumentData;
 type CollectionReference = Firebase.firestore.CollectionReference<DocumentData>;
 type DocumentReference = Firebase.firestore.DocumentReference;
+type DocumentSnapshot = Firebase.firestore.DocumentSnapshot;
 type QuerySnapshot = Firebase.firestore.QuerySnapshot<DocumentData>;
 type Query = Firebase.firestore.Query<DocumentData>;
 type QueryDocumentSnapshot = Firebase.firestore.QueryDocumentSnapshot;
@@ -188,19 +189,20 @@ export default class FibFSMgr {
     return(r);
   }
 
-  public static async sfupdateVideoData(videoData: VideoData): Promise<void> {
-    const collectionReference: CollectionReference | undefined = 
-      FibFSMgr.sfgetFS()?.collection(FibFSMgr.smvideoDatasCollectionName);
-    const documentReference: DocumentReference | undefined = collectionReference?.doc(videoData.mid);
+  public static async sfupdateVideoData(id: string, opParams: {views?: number}): Promise<void> {
+    const firestore: Firebase.firestore.Firestore = FibFSMgr.sfgetFS() as Firebase.firestore.Firestore;
 
-    // console.log(`\nVideoData before saving = ${videoData.toString()}, mduration=${videoData.mduration}`);
+    const docRef: DocumentReference = firestore.collection(FibFSMgr.smvideoDatasCollectionName).doc(id);
+    
+    const curDocSnapshot: DocumentSnapshot = await docRef.get();
 
-    documentReference?.set(
-      {
-        User_Id: videoData.muserId, Video_Id: videoData.mvideoId, 
-        Views: videoData.mviews, Duration: videoData.mduration
-      }
-    );    
+    const newData: {User_Id: string, Video_Id: string, Views: number, Duration: number} = {      
+      User_Id: curDocSnapshot.get("User_Id"), Video_Id: curDocSnapshot.get("Video_Id"), 
+      Views: (opParams.views != undefined) ? opParams.views : curDocSnapshot.get("Views"),
+      Duration: curDocSnapshot.get("Duration") 
+    };
+
+    await docRef.update(newData);
   }
 
   public static async sfaddVideoData(userId: string, videoId: string, views: number, duration: number): Promise<void> {

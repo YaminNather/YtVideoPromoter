@@ -1,7 +1,8 @@
 import React from "react";
-import {Text, View} from "react-native";
-import {Appbar, Button, Snackbar, Switch} from "react-native-paper";
+import { Modal, Text, View } from "react-native";
+import { ActivityIndicator, Appbar, Button, Snackbar, Switch } from "react-native-paper";
 import YoutubePlayer, { YoutubeIframeRef } from "react-native-youtube-iframe";
+import COverlayLoader from "../../../../../Components/COverlayLoader/COverlayLoader";
 import FibAuthMgr from "../../../../../Firebase/FibAuthMgr";
 import FibDbMgr from "../../../../../Firebase/FibDbMgr";
 import FibFSMgr from "../../../../../Firebase/FibFSMgr/FibFSMgr";
@@ -20,12 +21,16 @@ class State {
   public mcounterTimeout?: NodeJS.Timeout;
   public misSnackbarVisible: boolean = false;
   public mtoAutoPlay: boolean = true;
+  public misAddingCoins: boolean = false;
   //#endregion
 }
 
 export default class CompVideoPage extends React.Component<{}, State> {
   constructor(props: State) {
     super(props);
+
+    this.fbuildMainPart = this.fbuildMainPart.bind(this);
+    this.fbuildLoader = this.fbuildLoader.bind(this);
 
     // this.mvideoIds = [
     //   "7jeBAJo_PXM",
@@ -53,9 +58,50 @@ export default class CompVideoPage extends React.Component<{}, State> {
     );
 
     console.log("CustomLog:Done Listening");
-  }  
+  }
 
   public render(): React.ReactNode {
+    return(
+      <COverlayLoader 
+        style={{width: "100%", height: "100%"}}
+        misLoading={this.state.misAddingCoins}
+        mloaderComponent={this.fbuildLoader}
+        mbuildComponent={this.fbuildMainPart}        
+      />
+    );
+  }
+
+  public fbuildLoader(): React.ReactElement {
+    return(
+      <View style={{width: 300, height: 100, backgroundColor: "white", justifyContent: "center", alignItems: "center"}}>
+        <View style={{flexDirection: "row", alignItems: "center"}}>
+          <Text>Adding Coins</Text>
+
+          <View style={{width: 10}} />
+
+          <ActivityIndicator />
+        </View>
+      </View>
+    );
+
+    return(
+      <Modal animationType="slide" visible={true} transparent={true}>
+        <View style={{width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}>
+          <View style={{width: 300, height: 100, backgroundColor: "white", justifyContent: "center", alignItems: "center"}}>
+            <View style={{flexDirection: "row", alignItems: "center"}}>
+              <Text>Adding Coins</Text>
+
+              <View style={{width: 10}} />
+
+              <ActivityIndicator />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
+  public fbuildMainPart(): React.ReactElement {
     return(
       <View style={{flex: 1, backgroundColor: "red"}}>
         {/* {this.fbuildAppbar()} */}
@@ -92,14 +138,14 @@ export default class CompVideoPage extends React.Component<{}, State> {
     );
   }  
 
-  private fonTimerDone(): void {
-    this.setState({ misVideoPlaying: false });
-    this.setState({ misSnackbarVisible: true });
+  private async fonTimerDone(): Promise<void> {
+    this.setState({ misVideoPlaying: false, misSnackbarVisible: true });    
     this.fstopTimer();    
 
-    let newData: VideoData = this.state.mvideosDatas[this.state.mcurVidIndex];
-    newData.mviews--;
-    FibFSMgr.sfupdateVideoData(newData);
+    this.setState({ misAddingCoins: true });
+    let curVideoData: VideoData = this.state.mvideosDatas[this.state.mcurVidIndex];    
+    await FibFSMgr.sfupdateVideoData(curVideoData.mid, {views: curVideoData.mviews - 1});
+    this.setState({misAddingCoins: false});
 
     this.fchangeVideo();
   }
