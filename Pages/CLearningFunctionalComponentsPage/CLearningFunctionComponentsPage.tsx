@@ -1,26 +1,34 @@
 import React, {useState, Dispatch, SetStateAction, MutableRefObject, useRef, useEffect} from "react";
-import {View, Text, ActivityIndicator} from "react-native";
-import { Button } from "react-native-paper";
-import CObservableBuilder from "../../Components/CObservableBuilder/CObservableBuilder";
-import CStreamBuilder from "../../Components/CStreamBuilder/CStreamBuilder";
-import FibAuthMgr from "../../Firebase/FibAuthMgr";
-import UsersDatasMgr from "../../Firebase/FibFSMgr/UsersDatasMgr/UsersDatasMgr";
-import UserData from "../../Models/UserData";
-import WriteableStream from "../../Stream/Stream";
+import { View, Modal } from "react-native";
+import { Text, ActivityIndicator } from "react-native-paper";
+import COverlayLoader from "../../Components/COverlayLoader/COverlayLoader";
 
 export default function CLearningFunctionComponentsPage(): React.ReactElement {
-  return(
-    <View style={{width: "100%", height: "100%", justifyContent:"center", alignItems: "center"}}>
-      <CObservableBuilder<UserData | undefined>
-        minitialValue={undefined}
-        mobservable={UsersDatasMgr.sfgetUserDataObservable(FibAuthMgr.sfgetCurUser()?.fgetUId() as string)}
-        mbuilder={(userData) => {
-          if(userData == undefined)
-            return(<ActivityIndicator color="blue" />);
+  const fbuildLoaderComponent: ()=>React.ReactElement = () => (
+    <Modal animationType="slide" transparent={true} visible={true}>
+      <View style={{width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}>
+        <View style={{width: 300, height: 100, backgroundColor: "white", justifyContent: "center", alignItems: "center"}}>
+          <View style={{flexDirection: "row", alignItems: "center"}}>
+            <Text style={{fontSize: 20}}>Adding Coins</Text>
 
-          return(<Text style={{fontSize: 20, fontWeight: "bold"}}>{`Coins = ${userData?.mcoins}`}</Text>);
-        }}
-      />
-    </View>
+            <View style={{width: 20}}/> 
+
+            <ActivityIndicator size="small" />
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+
+  return(
+    <COverlayLoader 
+      style={{width: "100%", height: "100%"}} misLoading={true}
+      mloaderComponent={fbuildLoaderComponent}
+      mbuildComponent={() => (
+        <View style={{width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}>
+          <Text>I am a Pussy Cat.</Text>
+        </View>
+      )}
+    />
   );
 }
