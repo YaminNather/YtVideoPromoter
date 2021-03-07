@@ -4,8 +4,11 @@ import { ActivityIndicator, Appbar, Button, Snackbar, Switch } from "react-nativ
 import YoutubePlayer, { YoutubeIframeRef } from "react-native-youtube-iframe";
 import COverlayLoader from "../../../../../Components/COverlayLoader/COverlayLoader";
 import FibAuthMgr from "../../../../../Firebase/FibAuthMgr";
-import FibDbMgr from "../../../../../Firebase/FibDbMgr";
 import FibFSMgr from "../../../../../Firebase/FibFSMgr/FibFSMgr";
+import UsersDatasMgr from "../../../../../Firebase/FibFSMgr/UsersDatasMgr/UsersDatasMgr";
+import ViewsPurchaseInfos from "../../../../../Firebase/FibFSMgr/ViewsPurchasesInfoMgr/Models/ViewsPurchasesInfo";
+import ViewsPurchaseInfosMgr from "../../../../../Firebase/FibFSMgr/ViewsPurchasesInfoMgr/ViewsPurchasesInfoMgr";
+import UserData from "../../../../../Models/UserData";
 import VideoData from "../../../../../Models/VideoData";
 
 class State {
@@ -51,11 +54,11 @@ export default class CompVideoPage extends React.Component<{}, State> {
     // const videoData: VideoData[] = await FibFSMgr.sfgetAllVideosDatas("", "Yamin Nather");
     // this.setState({mvideosDatas: videoData});
 
-    this.mvideosDatasColtnUnsubscriber = FibFSMgr.sflistenToVideoDatasCollection(
+    this.mvideosDatasColtnUnsubber = FibFSMgr.sflistenToVideoDatasCollection(
       (videosDatas) => this.setState({mvideosDatas: videosDatas}),
       "",
-      FibAuthMgr.sfgetCurUser()?.fgetUId()
-    );
+      FibAuthMgr.sfgetCurUser()?.fgetUId()      
+    );    
 
     console.log("CustomLog:Done Listening");
   }
@@ -143,8 +146,16 @@ export default class CompVideoPage extends React.Component<{}, State> {
     this.fstopTimer();    
 
     this.setState({ misAddingCoins: true });
+    
     let curVideoData: VideoData = this.state.mvideosDatas[this.state.mcurVidIndex];    
+    
     await FibFSMgr.sfupdateVideoData(curVideoData.mid, {views: curVideoData.mviews - 1});
+
+    const curUserData: UserData = await UsersDatasMgr.sfgetUserData(FibAuthMgr.sfgetCurUser()?.fgetUId() as string) as UserData;
+    const viewsPurchaseInfos: ViewsPurchaseInfos = await ViewsPurchaseInfosMgr.sfgetViewsPurchaseInfo();
+    const reward: number = viewsPurchaseInfos.fgetDurations().get(curVideoData.mduration)?.mreward as number;
+    UsersDatasMgr.sfupdateUserData(FibAuthMgr.sfgetCurUser()?.fgetUId() as string, curUserData.mcoins + reward);    
+
     this.setState({misAddingCoins: false});
 
     this.fchangeVideo();
@@ -287,8 +298,8 @@ export default class CompVideoPage extends React.Component<{}, State> {
   } 
   
   public componentWillUnmount(): void {
-    if(this.mvideosDatasColtnUnsubscriber != undefined)
-      FibFSMgr.sfunsubscribeListener(this.mvideosDatasColtnUnsubscriber);
+    if(this.mvideosDatasColtnUnsubber != undefined)
+      FibFSMgr.sfunsubscribeListener(this.mvideosDatasColtnUnsubber);
 
     this.fstopTimer();
   }
@@ -296,6 +307,6 @@ export default class CompVideoPage extends React.Component<{}, State> {
   //#region Variables
   // readonly mmaxCount: number = 5;
   private mvideoRef?: React.RefObject<YoutubeIframeRef>;
-  private mvideosDatasColtnUnsubscriber?: ()=>void;
+  private mvideosDatasColtnUnsubber?: ()=>void;
   //#endregion
 }
