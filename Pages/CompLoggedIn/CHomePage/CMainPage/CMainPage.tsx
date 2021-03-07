@@ -3,6 +3,7 @@ import { BottomNavigation, Drawer} from "react-native-paper";
 import CompVideoPage from './CompVideoPage/CompVideoPage';
 import CompUserInfoPage from "./CompUserInfoPage/CompUserInfoPage";
 import { Text } from 'react-native';
+import CBuyCoinsPage from './CBuyCoinsPage/CBuyCoinsPage';
 
 class State {
   constructor(mcurIndex: number = 0) {
@@ -20,29 +21,23 @@ export class CMainPage extends React.Component<{}, State> {
 
   public render(): React.ReactNode {
     const routes = [
-      { key: "UserInfo", title: "User Info", icon: "home"},
-      { key: "Promote", title: "Promote", icon: "play"}
+      {key: "User Info", title: "User Info", icon: "home"}, {key: "Promote", title: "Promote", icon: "play"},
+      {key: "Buy Coins", title: "Buy Coins", icon: "bitcoin"}
     ];
-    // console.log(`Rerendering, Current State index = ${this.state.mcurIndex}`);
-    return (
-      <>
-        <BottomNavigation
-          navigationState={{ index: this.state.mcurIndex, routes }}
-          renderScene={this.renderScene}
-          shifting={true}
-          onIndexChange={(index: number) => {
-            console.log("Index Changed");
-            this.setState((prevState, props) => { return { mcurIndex: index }; });
-          }}
-        /> 
-      </>
+    const renderScene = BottomNavigation.SceneMap(
+      {
+        "User Info": () => <CompUserInfoPage />, "Promote": () => <CompVideoPage />, "Buy Coins": () => <CBuyCoinsPage />
+      }
+    );
+    
+    return (      
+      <BottomNavigation
+        navigationState={{ index: this.state.mcurIndex, routes }} renderScene={renderScene} shifting={true}
+        onIndexChange={(index: number) => {
+          console.log(`Main Page current tab: ${this.state.mcurIndex}`);
+          this.setState( {mcurIndex: index} );
+        }}
+      /> 
     );
   }
-
-  readonly renderScene = BottomNavigation.SceneMap(
-    {
-      "UserInfo": () => <CompUserInfoPage />,
-      "Promote": () => <CompVideoPage />
-    }
-  );
 }

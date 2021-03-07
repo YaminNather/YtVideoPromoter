@@ -6,7 +6,7 @@ import { CMainPage } from "./CMainPage/CMainPage";
 import CAddVideoPage from "./CAddVideoPage/CAddVideoPage";
 import { ActivityIndicator, Button, IconButton } from "react-native-paper";
 import FibAuthMgr from "../../../Firebase/FibAuthMgr";
-import {MaterialIcons} from "@expo/vector-icons";
+import {FontAwesome5} from "@expo/vector-icons";
 import UsersDatasMgr from "../../../Firebase/FibFSMgr/UsersDatasMgr/UsersDatasMgr";
 import CLearningFunctionComponentsPage from "../../CLearningFunctionalComponentsPage/CLearningFunctionComponentsPage";
 import CStreamBuilder from "../../../Components/CStreamBuilder/CStreamBuilder";
@@ -59,7 +59,9 @@ const CHomePage: React.FC = () => {
 const CCoinsDisplay: React.FC = () => {
   return(
     <View style={{flexDirection: "row", alignItems: "center"}}>
-      <MaterialIcons name="attach-money" size={30} />
+      <FontAwesome5 name="coins" size={30} />
+
+      <View style={{width: 5}} />
 
       <CObservableBuilder<UserData | undefined>
         minitialValue={undefined}        
