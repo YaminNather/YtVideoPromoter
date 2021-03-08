@@ -1,9 +1,9 @@
 import {enableScreens} from "react-native-screens";
 import React from "react";
-import CompSignInPage from "../CompSignInPage/CompSignInPage";
-import CompRegisterPage from "../CompRegisterPage/CompRegisterPage";
+import CompRegisterPage from "../SignIn And Register Page/CompRegisterPage/CompRegisterPage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import CompSignInPage from "../SignIn And Register Page/CompSignInPage/CompSignInPage";
 
 
 export default class CompAuthNavWrapper extends React.Component {
