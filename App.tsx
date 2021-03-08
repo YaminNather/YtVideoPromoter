@@ -2,7 +2,7 @@ import "react-native-gesture-handler";
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { LogBox, StyleSheet, Text, View } from 'react-native';
-import {DarkTheme, Provider as PaperProvider, Button} from "react-native-paper";
+import {DarkTheme, Provider as PaperProvider, Button, DefaultTheme} from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import {createStackNavigator} from "@react-navigation/stack";
 import { CMainPage } from "./Pages/CompLoggedIn/CHomePage/CMainPage/CMainPage";
