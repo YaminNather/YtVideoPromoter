@@ -2,7 +2,6 @@ import React from 'react';
 import { BottomNavigation, Drawer} from "react-native-paper";
 import CompVideoPage from './CompVideoPage/CompVideoPage';
 import CompUserInfoPage from "./CompUserInfoPage/CompUserInfoPage";
-import { Text } from 'react-native';
 import CBuyCoinsPage from './CBuyCoinsPage/CBuyCoinsPage';
 
 class State {

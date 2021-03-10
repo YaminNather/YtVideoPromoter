@@ -1,8 +1,8 @@
 import React, { FC } from "react";
 import {StyleSheet, View, StyleProp, ViewStyle, GestureResponderEvent} from "react-native";
-import { IconButton, Text } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import {MaterialIcons} from "@expo/vector-icons";
-import { Theme, useTheme } from "@react-navigation/native";
+import { Theme } from "react-native-paper/lib/typescript/types";
 
 interface Props {
   mheading: string;
@@ -12,7 +12,11 @@ interface Props {
   mstyle?: StyleProp<ViewStyle>;
 }
 
-const CDropdownBox: FC<Props> = (props) => {  
+const CDropdownBox: FC<Props> = (props) => {
+  //#region Hooks
+  const theme: Theme = useTheme();
+  //#endregion
+  
   let touchLoc: [number, number] = [0, 0];
 
   const fonTouchStart: (e: GestureResponderEvent)=>void = (e) => {
@@ -20,21 +24,20 @@ const CDropdownBox: FC<Props> = (props) => {
     props.mopen(touchLoc);
   };
 
-  const render: ()=>React.ReactElement = () => {
+  const frender: ()=>React.ReactElement = () => {    
     const defStyle: StyleProp<ViewStyle> = {
-      backgroundColor: "#DFDFDF", borderBottomWidth: (props.misOpen) ? 2 : 1, 
+      backgroundColor: theme.colors.background, borderBottomWidth: (props.misOpen) ? 2 : 1, 
       borderColor: "black", paddingHorizontal: 10, paddingVertical: 5
     };
-    const colors = useTheme().colors;
-    // const labelAndIconColor: string = (props.misOpen) ? "#3F51B5" : "#6E6E6E";
-    const labelAndIconColor: string = (props.misOpen) ? colors.primary : "#6E6E6E";
+
+    const labelAndIconColor: string = (props.misOpen) ? theme.colors.primary : "#6E6E6E";
 
     return(
       <View style={[defStyle, props.mstyle]} onTouchStart={fonTouchStart}>
         <Text style={{color: labelAndIconColor}}>{props.mheading}</Text>
         
         <View style={{flexDirection: "row", alignItems: "center"}}> 
-          <Text style={{fontSize: 15}}>{props.mtitle}</Text>
+          <Text style={{fontSize: 15, color: labelAndIconColor}}>{props.mtitle}</Text>
           
           <View style={{flex: 1}} />
           
@@ -48,7 +51,7 @@ const CDropdownBox: FC<Props> = (props) => {
     );
   };
 
-  return render();
+  return frender();
 };
 
 export default CDropdownBox;

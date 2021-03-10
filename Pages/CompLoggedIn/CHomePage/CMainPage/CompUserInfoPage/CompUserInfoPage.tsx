@@ -1,7 +1,8 @@
 import { NavigationContext } from "@react-navigation/native";
 import React from "react";
 import {View, ActivityIndicator} from "react-native";
-import { Appbar, Button, IconButton, FAB, Text, Modal} from "react-native-paper";
+import { Appbar, Button, IconButton, FAB, Text, Modal, useTheme, withTheme, Surface} from "react-native-paper";
+import { Theme } from "react-native-paper/lib/typescript/types";
 import CObservableBuilder from "../../../../../Components/CObservableBuilder/CObservableBuilder";
 import FibAuthMgr from "../../../../../Firebase/FibAuthMgr";
 import FibFSMgr from "../../../../../Firebase/FibFSMgr/FibFSMgr";
@@ -9,14 +10,14 @@ import VideoData from "../../../../../Models/VideoData";
 import CVideosList from "./CVideoList/CVideosList";
 import { State, gmcontext as Context, ContextData } from "./UserInfoPageData";
 
-export default class CompUserInfoPage extends React.Component<any, State> {
-  constructor(props: {}) {
+export class CompUserInfoPage extends React.Component<{theme: Theme}, State> {
+  constructor(props: {theme: Theme}) {
     super(props);
 
     this.state = new State();    
   }
   
-  public render(): React.ReactNode {
+  public render(): React.ReactElement {
     return(
       <Context.Provider value={new ContextData(this.state, this.fdeleteVideoData)}>
         <View style={{flex: 1}}>
@@ -39,7 +40,7 @@ export default class CompUserInfoPage extends React.Component<any, State> {
     );
   }
   
-  private fbuildFAB(): React.ReactNode {
+  private fbuildFAB(): React.ReactElement {
     return(
       <NavigationContext.Consumer>
         {(navigation) => {
@@ -55,9 +56,9 @@ export default class CompUserInfoPage extends React.Component<any, State> {
     );
   }
   
-  private fupperSection(): React.ReactNode {
+  private fupperSection(): React.ReactElement {    
     return (
-      <View style={{ flexDirection: "row", backgroundColor: "royalblue", padding: 10 }}>
+      <Surface style={{ flexDirection: "row", padding: 10 }}>
         <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "grey" }} />
 
         <View style={{ marginLeft: 10 }}>
@@ -81,11 +82,11 @@ export default class CompUserInfoPage extends React.Component<any, State> {
           icon="delete" color="white" size={30}
           onPress={() => this.setState((curState, props) => ({minDeleteState: !curState.minDeleteState}))}
         />
-      </View>
+      </Surface>
     );
   }
   
-  private fbuildVideoList(): React.ReactNode {
+  private fbuildVideoList(): React.ReactElement {
     return(
       <CObservableBuilder<VideoData[] | undefined> 
         minitialValue={undefined}
@@ -111,3 +112,5 @@ export default class CompUserInfoPage extends React.Component<any, State> {
     this.setState({misDeleting: false});
   }
 }
+
+export default withTheme(CompUserInfoPage);

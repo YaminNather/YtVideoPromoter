@@ -1,6 +1,7 @@
 import React, { FC } from "react";
-import { StyleProp, StyleSheet, Text, TextStyle, View } from "react-native";
-import {TextInput, Button, ActivityIndicator} from "react-native-paper"; 
+import { View } from "react-native";
+import {Text, Button, ActivityIndicator, Surface, withTheme} from "react-native-paper"; 
+import { Theme } from "react-native-paper/lib/typescript/types";
 import CLoader from "../../../Components/CLoader/CLoader";
 import FibAuthMgr from "../../../Firebase/FibAuthMgr";
 import UsersDatasMgr from "../../../Firebase/FibFSMgr/UsersDatasMgr/UsersDatasMgr";
@@ -19,8 +20,8 @@ class State {
   public misBusy: boolean = false;
 }
 
-export default class CompRegisterPage extends React.Component<{}, State> {
-  public constructor(props: {}) {
+export class CompRegisterPage extends React.Component<{theme: Theme}, State> {
+  public constructor(props: {theme: Theme}) {
     super(props);
 
     this.state = new State();
@@ -32,7 +33,7 @@ export default class CompRegisterPage extends React.Component<{}, State> {
   public render(): React.ReactElement {
     return(
       <View 
-        style={{width: "100%", flex: 1, paddingHorizontal: 10, justifyContent: "center"}}
+        style={{width: "100%", flex: 1, paddingHorizontal: 10, justifyContent: "center", backgroundColor: this.props.theme.colors.background}}
       >    
         <CLoader 
           misLoading={this.state.misBusy}
@@ -51,7 +52,7 @@ export default class CompRegisterPage extends React.Component<{}, State> {
         <View style={{height: 20}} />
 
         <View style={{width: "100%", alignItems: "center"}}>
-          <View style={{width: "100%", backgroundColor: "white", borderRadius: 20,  padding: 20, alignItems: "center"}}>
+          <Surface style={CommonStyles.Container}>
             <CCustomTextInput 
               mlabel="Email" mvalue={this.state.mcurEmail} 
               monChangeText={(text) => { this.setState({mcurEmail: text}); }} 
@@ -73,7 +74,7 @@ export default class CompRegisterPage extends React.Component<{}, State> {
             <View style={{height: 20}} />
 
             {this.fbuildErrorMsg()}
-          </View>
+          </Surface>
         </View>
       </>
     );
@@ -123,3 +124,5 @@ export default class CompRegisterPage extends React.Component<{}, State> {
     return <Text style={{color: "red"}}>{this.state.merrorMsg}</Text>;    
   }
 }
+
+export default withTheme(CompRegisterPage);

@@ -1,6 +1,7 @@
 import React from "react";
-import { Modal, Text, View } from "react-native";
-import { ActivityIndicator, Appbar, Button, Snackbar, Switch } from "react-native-paper";
+import { Modal, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Text, Appbar, Button, Snackbar, Surface, Switch, withTheme } from "react-native-paper";
+import { Theme } from "react-native-paper/lib/typescript/types";
 import YoutubePlayer, { YoutubeIframeRef } from "react-native-youtube-iframe";
 import COverlayLoader from "../../../../../Components/COverlayLoader/COverlayLoader";
 import FibAuthMgr from "../../../../../Firebase/FibAuthMgr";
@@ -28,8 +29,8 @@ class State {
   //#endregion
 }
 
-export default class CompVideoPage extends React.Component<{}, State> {
-  constructor(props: State) {
+export class CompVideoPage extends React.Component<{theme: Theme}, State> {
+  constructor(props: {theme: Theme}) {
     super(props);
 
     this.fbuildMainPart = this.fbuildMainPart.bind(this);
@@ -63,20 +64,27 @@ export default class CompVideoPage extends React.Component<{}, State> {
     console.log("CustomLog:Done Listening");
   }
 
-  public render(): React.ReactNode {
+  public render(): React.ReactElement {
     return(
       <COverlayLoader 
-        style={{width: "100%", height: "100%"}}
-        misLoading={this.state.misAddingCoins}
-        mloaderComponent={this.fbuildLoader}
-        mbuildComponent={this.fbuildMainPart}        
+        style={{width: "100%", height: "100%"}} misLoading={this.state.misAddingCoins} mloaderComponent={this.fbuildLoader}
+        mbuildComponent={this.fbuildMainPart}
       />
     );
   }
 
   public fbuildLoader(): React.ReactElement {
+    const styles = StyleSheet.create(
+      {
+        container: {
+          backgroundColor: "white", borderRadius: 3, paddingVertical: 20, paddingHorizontal: 40,
+          justifyContent: "center", alignItems: "center"
+        }
+      }
+    );
+
     return(
-      <View style={{width: 300, height: 100, backgroundColor: "white", justifyContent: "center", alignItems: "center"}}>
+      <View style={styles.container}>
         <View style={{flexDirection: "row", alignItems: "center"}}>
           <Text>Adding Coins</Text>
 
@@ -85,23 +93,7 @@ export default class CompVideoPage extends React.Component<{}, State> {
           <ActivityIndicator />
         </View>
       </View>
-    );
-
-    return(
-      <Modal animationType="slide" visible={true} transparent={true}>
-        <View style={{width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}>
-          <View style={{width: 300, height: 100, backgroundColor: "white", justifyContent: "center", alignItems: "center"}}>
-            <View style={{flexDirection: "row", alignItems: "center"}}>
-              <Text>Adding Coins</Text>
-
-              <View style={{width: 10}} />
-
-              <ActivityIndicator />
-            </View>
-          </View>
-        </View>
-      </Modal>
-    );
+    );    
   }
 
   public fbuildMainPart(): React.ReactElement {
@@ -254,11 +246,11 @@ export default class CompVideoPage extends React.Component<{}, State> {
 
   private fbuildBottomSection(): React.ReactNode {
     return(
-      <View style={{padding: 10, backgroundColor: "white", alignItems: "center"}}>
+      <Surface style={{padding: 10, alignItems: "center"}}>
         <View style={{flexDirection: "row", alignItems: "center"}}>
           <View style={{width:50, height:50, backgroundColor: "black", borderRadius: 25}} />
           
-          <Text style={{marginLeft: 20, fontSize: 40, color: "orange"}}>{this.state.mcount}</Text>
+          <Text style={{marginLeft: 20, fontSize: 40, color: this.props.theme.colors.accent}}>{this.state.mcount}</Text>
           
           <View style={{flex: 1}} />
 
@@ -281,7 +273,7 @@ export default class CompVideoPage extends React.Component<{}, State> {
         >
           Skip this
         </Button>
-      </View>
+      </Surface>
     );
   }
 
@@ -310,3 +302,5 @@ export default class CompVideoPage extends React.Component<{}, State> {
   private mvideosDatasColtnUnsubber?: ()=>void;
   //#endregion
 }
+
+export default withTheme(CompVideoPage);

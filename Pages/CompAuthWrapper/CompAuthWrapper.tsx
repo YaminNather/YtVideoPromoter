@@ -4,7 +4,6 @@ import FibAuthMgr from "../../Firebase/FibAuthMgr";
 import User from "../../Models/User";
 import CompAuthNavWrapper from "../CompAuthNavWrapper/CompAuthNavWrapper";
 import CompLoggedIn from "../CompLoggedIn/CompLoggedIn";
-import CompSignInPage from "../CompSignInPage/CompSignInPage"; 
 
 export class CompAuthWrapper extends React.Component {
   public render(): React.ReactNode {

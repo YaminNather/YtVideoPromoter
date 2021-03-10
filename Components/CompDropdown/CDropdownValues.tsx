@@ -1,6 +1,7 @@
-import React, { FC, Ref, useEffect, useRef } from "react";
-import {Animated, View, Modal, Platform, StyleProp, ViewStyle, LayoutChangeEvent} from "react-native";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import React, { FC, useEffect, useRef } from "react";
+import {Animated, View, StyleProp, ViewStyle} from "react-native";
+import { useTheme } from "react-native-paper";
+import { Theme } from "react-native-paper/lib/typescript/types";
 import { ItemData } from "./CDropdown";
 import CDropdownItem from "./CDropdownItem";
 
@@ -22,8 +23,12 @@ const CDropdownValues: FC<Props> = (props) => {
   );
 
   const frender: ()=>React.ReactElement = () => {
+    //#region Hooks
+    const theme: Theme = useTheme();
+    //#endregion
+
     const defStyle: StyleProp<Animated.WithAnimatedObject<ViewStyle>> = {
-      width: "100%", zIndex: 20, backgroundColor: "#EEEEEE",
+      width: "100%", zIndex: 20, backgroundColor: theme.colors.surface,
       position: "absolute", transform: [{scaleY: openAnimValue}, {translateY: props.moffsetY}],
       elevation: 5, borderColor: "#000000"
     };

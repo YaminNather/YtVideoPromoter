@@ -1,5 +1,7 @@
 import React from "react";
 import {View, StyleProp, ViewStyle, TextStyle, Dimensions} from "react-native";
+import { withTheme } from "react-native-paper";
+import { Theme } from "react-native-paper/lib/typescript/types";
 import CDropdownBox from "./CDropdownBox";
 import CDropdownValues from "./CDropdownValues";
 
@@ -36,7 +38,7 @@ interface Props<T> {
   monChange?: (value: T)=>void;  
   mcontainerStyle?: StyleProp<ViewStyle>;
   mheadingStyle?: StyleProp<ViewStyle>;
-  mboxStyle?: StyleProp<ViewStyle>;
+  mboxStyle?: StyleProp<ViewStyle>;  
 }
 
 export default class CDropdown<T = any> extends React.Component<Props<T>, State> {

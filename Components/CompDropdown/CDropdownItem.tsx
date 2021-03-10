@@ -1,8 +1,6 @@
 import React, { FC } from 'react';
-import {Button} from "react-native";
-import { TouchableNativeFeedback, TouchableOpacity } from 'react-native-gesture-handler';
-import {Divider, Menu, Text } from 'react-native-paper';
-import CDropdown from './CDropdown';
+import { TouchableNativeFeedback } from 'react-native-gesture-handler';
+import { Text } from 'react-native-paper';
 
 interface Props {
   mindex: number;

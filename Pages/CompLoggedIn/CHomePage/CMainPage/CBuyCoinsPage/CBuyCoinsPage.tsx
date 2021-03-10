@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { ToastAndroid, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { Card, List, Text } from "react-native-paper";
+import { Card, List, Text, useTheme } from "react-native-paper";
 import {FontAwesome5} from "@expo/vector-icons";
 
 const CBuyCoinsPage: FC = () => {
@@ -9,13 +9,13 @@ const CBuyCoinsPage: FC = () => {
     const fbuildBuyCoinsBtn: (coins:number, rupees: number, key?: number)=>React.ReactElement = (coins, rupees, key) => {
       return(     
         <Card 
-          key={key} style={{padding: 10, marginVertical: 5}} 
+          key={key} style={{padding: 10, marginVertical: 5}} elevation={3}
           onPress={() => {ToastAndroid.show(`Bought ${coins} coins for ${rupees} rupees`, ToastAndroid.SHORT)}}
         >
           <List.Item            
             title={(
               <View style={{flexDirection: "row", alignItems: "center"}}>
-                <FontAwesome5 name="coins" size={30} />                
+                <FontAwesome5 name="coins" size={30} color={useTheme().colors.primary}/>      
 
                 <View style={{width: 10}} />
 
@@ -25,7 +25,7 @@ const CBuyCoinsPage: FC = () => {
             description={`${coins} coins will be added to your account`}              
             right={(_) => (            
               <View style={{justifyContent: "center", alignItems: "center"}}>
-                <Text style={{fontSize: 20, fontWeight: "bold"}}>{`Rs. ${rupees}`}</Text>
+                <Text style={{fontSize: 20}}>{`Rs. ${rupees}`}</Text>
               </View>            
             )}
           />
@@ -38,10 +38,8 @@ const CBuyCoinsPage: FC = () => {
       buyCoinsBtns.push(fbuildBuyCoinsBtn(i * 10, i * 100, i));    
 
     return(
-      <View style={{width: "100%", height: "100%", padding: 10}}>
-        <ScrollView>
-          {buyCoinsBtns}
-        </ScrollView>
+      <View style={{width: "auto", height: "auto", padding: 10}}>
+        <ScrollView>{buyCoinsBtns}</ScrollView>
       </View>
     );
   };

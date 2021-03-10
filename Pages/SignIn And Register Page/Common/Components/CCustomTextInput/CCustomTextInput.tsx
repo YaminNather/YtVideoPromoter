@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { StyleProp, TextStyle, StyleSheet } from "react-native";
-import { TextInput } from "react-native-paper";
+import { TextInput, Colors } from "react-native-paper";
 
 interface CustomTextInputProps {
   mlabel: string;
@@ -22,7 +22,7 @@ const CCustomTextInput: FC<CustomTextInputProps> = (props) => {
 
     return(
       <TextInput
-        mode="flat" label={props.mlabel} textContentType={props.mtextContentType} value={props.mvalue} 
+        mode="flat" label={props.mlabel} placeholder={props.mlabel} textContentType={props.mtextContentType} value={props.mvalue} 
         style={finalStyle} onChangeText={props.monChangeText} 
       />
     );

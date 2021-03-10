@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, {FC, useEffect, MutableRefObject} from "react";
 import {Image, View} from "react-native";
-import {Button, TextInput, Text, ActivityIndicator, Modal} from "react-native-paper";
+import {Button, TextInput, Text, ActivityIndicator, Modal, Surface, useTheme} from "react-native-paper";
 import { Subscription } from "rxjs";
 import CDropdown, { ItemData } from "../../../../Components/CompDropdown/CDropdown";
 import FibAuthMgr from "../../../../Firebase/FibAuthMgr";
@@ -168,21 +168,22 @@ const CAddVideoPage : FC = (props) => {
     return coinsForViews * multiplierForDuration;    
   }
 
-  const frender: ()=>React.ReactElement = () => {
+  const frender: ()=>React.ReactElement = () => {    
+  
     if(!fgetInitialLoadStatus())
       return(
-        <View style={{width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}>
+        <View style={{width: "100%", height: "100%", backgroundColor: useTheme().colors.background, justifyContent: "center", alignItems: "center"}}>
           <ActivityIndicator size="large" color="blue" /> 
         </View>
       );
 
     return(
-      <View style={{width: "100%", height: "100%"}}>
-        <View style={{backgroundColor: "#DDDDDD", paddingVertical: 10, flex: 1, justifyContent: "center"}}>
+      <View style={{width: "100%", height: "100%", backgroundColor: useTheme().colors.background}}>
+        <View style={{paddingVertical: 10, flex: 1, justifyContent: "center"}}>
           {fbuildVideoThumbnail()}
         </View>
   
-        <View style={{padding: 10, borderColor: "black"}}>          
+        <Surface style={{padding: 10, borderColor: "black"}}>          
           <Text style={{fontSize: 20}}>Video Details:</Text>
           
           <TextInput
@@ -203,7 +204,7 @@ const CAddVideoPage : FC = (props) => {
           {fbuildTotalLbl()}
             
           {fbuildAddVideoBtn()}
-        </View>
+        </Surface>
 
         <Modal visible={isAddingToFirestore[0]}>
           <ActivityIndicator size="large" color="blue" />

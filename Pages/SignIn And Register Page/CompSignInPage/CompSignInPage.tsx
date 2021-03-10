@@ -1,32 +1,35 @@
 import React from "react";
 import { View } from "react-native";
-import {Button, Text, Colors} from "react-native-paper";
+import {Button, Text, Colors, Surface, withTheme, useTheme} from "react-native-paper";
 import {NavigationContext} from "@react-navigation/native";
 import FibAuthMgr from "../../../Firebase/FibAuthMgr";
 import CCustomTextInput from "../Common/Components/CCustomTextInput/CCustomTextInput";
 import { CommonStyles } from "../Common/Styles/CommonStyles";
+import { Theme } from "react-native-paper/lib/typescript/types";
 
 class State {
   public mcurEmail: string = "";
   public mcurPassword: string = "";
 }
 
-export default class CompSignInPage extends React.Component<{}, State> {
-  constructor(props: State) {
+export class CompSignInPage extends React.Component<{theme: Theme}, State> {
+  constructor(props: {theme: Theme}) {
     super(props);
 
     this.state = new State();
   }
   
-  public render(): React.ReactNode {
+  public render(): React.ReactElement {
+    const theme: Theme = this.props.theme;
+
     return(
-      <View style={{flex: 1, paddingHorizontal: 10, justifyContent: "center"}}>         
+      <View style={{flex: 1, paddingHorizontal: 10, justifyContent: "center", backgroundColor: this.props.theme.colors.background}}>         
         <Text style={CommonStyles.Title}>Signin Page</Text>
 
         <View style={{height: 20}} />
 
         <View style={{width: "auto", alignItems: "center"}}>
-          <View style={CommonStyles.Container}>
+          <Surface style={CommonStyles.Container}>
             <CCustomTextInput
               mlabel="Email" mvalue={this.state.mcurEmail} monChangeText={(text) => this.setState({mcurEmail: text})}
             />                    
@@ -42,12 +45,12 @@ export default class CompSignInPage extends React.Component<{}, State> {
             >
               SignIn With EAP
             </Button>          
-          </View>        
+          </Surface>        
 
           <View style={{width: "90%", flexDirection: "row", paddingVertical: 30, alignItems: "center"}}>
             <View style={{height: 2, flex: 50, backgroundColor: Colors.grey300}} />
 
-            <Text style={{color: "rgba(1, 1, 1, 0.5)", marginHorizontal: 10}}>OR</Text>
+            <Text style={{marginHorizontal: 10}}>OR</Text>
             
             <View style={{height: 2, flex: 50, backgroundColor: Colors.grey300}} />
           </View>        
@@ -60,7 +63,7 @@ export default class CompSignInPage extends React.Component<{}, State> {
 
           <View style={{height: 50}} />     
 
-          <Text>Dont have an account already?</Text>
+          <Text style={{color: theme.colors.accent}}>Dont have an account already?</Text>
 
           <View style={{height: 5}} />
 
@@ -81,3 +84,5 @@ export default class CompSignInPage extends React.Component<{}, State> {
     );
   }
 }
+
+export default withTheme(CompSignInPage);
